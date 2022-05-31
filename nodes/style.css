@@ -1,0 +1,15 @@
+#div-canvas {
+    position: relative;
+    margin-left: 10px;
+    margin-top: 10px;
+}
+
+#div-canvas canvas{
+    position: absolute;
+    left: 0;
+    top: 0;
+}
+
+canvas {
+    border: 1px solid black;
+}
