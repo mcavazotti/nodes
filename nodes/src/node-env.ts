@@ -17,5 +17,11 @@ export class NodeEnviroment {
         this.camera = new Camera(this.bg, this.board);
 
         this.camera.renderBackground();
+        this.board.element.addEventListener("mousemove", (event) => {
+            console.log(event);
+            let vec = new Vector2(event.x,event.y);
+            console.log(this.camera.convertRasterCoordToWorld(vec))
+        });
+
     }
 }

@@ -10,13 +10,21 @@ export class Camera {
         this.frustrumHeight = this.frustrumWidth / this.aspectRatio;
         this.bgOptions = Object.assign({ bgColor: "#5d667a", lineColor: "#00000044", lineThickness: 1, lineSpacing: new Vector2(1, 1), offset: new Vector2(0, 0) }, bgOpts);
     }
+    get canvasDimention() {
+        return new Vector2(this.bg.element.width, this.bg.element.height);
+    }
     convertWorldCoordToRaster(vec) {
         const relativeOffset = vec.sub(this.position);
         const cameraSpacePosition = relativeOffset.div(new Vector2(this.frustrumWidth * this.zoom, this.frustrumHeight * this.zoom));
-        const canvasCenter = new Vector2(this.bg.element.width / 2, this.bg.element.height / 2);
-        const rasterOffset = cameraSpacePosition.mult(new Vector2(this.bg.element.width, this.bg.element.height));
+        const canvasCenter = this.canvasDimention.scale(0.5);
+        const rasterOffset = cameraSpacePosition.mult(this.canvasDimention);
         const rasterCoord = new Vector2(canvasCenter.x + rasterOffset.x, canvasCenter.y - rasterOffset.y);
         return rasterCoord;
+    }
+    convertRasterCoordToWorld(vec) {
+        const cameraSpacePosition = new Vector2((vec.x - this.canvasDimention.x / 2) / (this.canvasDimention.x / 2), (vec.y - this.canvasDimention.y / 2) / (this.canvasDimention.y / 2));
+        const relativeOffset = new Vector2(cameraSpacePosition.x * this.frustrumWidth * this.zoom, cameraSpacePosition.y * this.frustrumHeight * this.zoom);
+        return new Vector2(this.position.x + relativeOffset.x, this.position.y - relativeOffset.y);
     }
     renderBackground() {
         this.bg.context.fillStyle = this.bgOptions.bgColor;
