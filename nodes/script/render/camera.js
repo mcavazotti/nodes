@@ -1,6 +1,11 @@
-import { Vector2 } from "../types/vector.js";
+import { InputEventType } from "../core/input/input-events.js";
+import { InputHandler } from "../core/input/input-handler.js";
+import { MouseInputType } from "../core/input/input-types.js";
+import { Vector2 } from "../core/math/vector.js";
 export class Camera {
     constructor(bg, board, position = new Vector2(0, 0), frustrumWidth = 10, zoom = 1, bgOpts = {}) {
+        this.moveCamera = false;
+        this.inputHandler = InputHandler.getInstance();
         this.position = position;
         this.frustrumWidth = frustrumWidth;
         this.zoom = zoom;
@@ -9,6 +14,21 @@ export class Camera {
         this.aspectRatio = bg.element.width / bg.element.height;
         this.frustrumHeight = this.frustrumWidth / this.aspectRatio;
         this.bgOptions = Object.assign({ bgColor: "#5d667a", lineColor: "#00000044", lineThickness: 1, lineSpacing: new Vector2(1, 1), offset: new Vector2(0, 0) }, bgOpts);
+        this.inputHandler.addEventListener(InputEventType.mousedown, (e) => {
+            // console.log(e);
+            this.moveCamera = e.mouseButtonDown.indexOf(MouseInputType.leftButton) != -1;
+        });
+        this.inputHandler.addEventListener(InputEventType.mouseup, (e) => {
+            // console.log(e);
+            this.moveCamera = e.mouseButtonDown.indexOf(MouseInputType.leftButton) != -1;
+        });
+        this.inputHandler.addEventListener(InputEventType.mousemove, (e) => {
+            if (this.moveCamera) {
+                this.position = this.position.sub(e.mouseMovement);
+                // console.log(e.mouseMovement);
+                // console.log(this.position);
+            }
+        });
     }
     get canvasDimention() {
         return new Vector2(this.bg.element.width, this.bg.element.height);
@@ -51,6 +71,17 @@ export class Camera {
             linePos.y += this.bgOptions.lineSpacing.y;
         }
         this.bg.context.stroke();
+    }
+    render() {
+        this.renderBackground();
+        this.board.context.fillStyle = "#00000000";
+        this.board.context.clearRect(0, 0, this.board.element.width, this.board.element.height);
+        this.board.context.fillStyle = "tomato";
+        var tl = this.convertWorldCoordToRaster(new Vector2(-1, 1));
+        var br = this.convertWorldCoordToRaster(new Vector2(1, -1));
+        var w = br.x - tl.x;
+        var h = br.y - tl.y;
+        this.board.context.fillRect(tl.x, tl.y, w, h);
     }
 }
 //# sourceMappingURL=camera.js.map

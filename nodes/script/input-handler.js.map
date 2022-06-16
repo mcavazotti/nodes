@@ -1,0 +1,1 @@
+{"version":3,"file":"input-handler.js","sourceRoot":"","sources":["../src/input-handler.ts"],"names":[],"mappings":"AAAA,MAAM,OAAO,YAAY;IAGrB,gBAAuB,CAAC;IAEjB,WAAW;QACd,IAAG,CAAC,YAAY,CAAC,QAAQ,EAAE;YACvB,YAAY,CAAC,QAAQ,GAAG,IAAI,YAAY,EAAE,CAAC;SAC9C;QAED,OAAO,YAAY,CAAC,QAAQ,CAAC;IACjC,CAAC;CACJ"}
