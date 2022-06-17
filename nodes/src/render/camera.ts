@@ -74,6 +74,16 @@ export class Camera {
                 // console.log(this.position);
             }
         })
+        this.inputHandler.addEventListener(InputEventType.mousewheel, (e) => {
+            switch (e.mouseScroll!) {
+                case MouseInputType.scrollUp:
+                    this.zoom = this.zoom == 1 ? 1 : this.zoom - 1;
+                    break;
+                case MouseInputType.scrollDown:
+                    this.zoom++;
+                    break;
+            }
+        });
     }
 
     convertWorldCoordToRaster(vec: Vector2): Vector2 {
@@ -88,7 +98,7 @@ export class Camera {
 
     convertRasterCoordToWorld(vec: Vector2): Vector2 {
         const cameraSpacePosition = new Vector2((vec.x - this.canvasDimention.x / 2) / (this.canvasDimention.x / 2), -(vec.y - this.canvasDimention.y / 2) / (this.canvasDimention.y / 2));
-        const relativeOffset = new Vector2(cameraSpacePosition.x * this.frustrumWidth/2 * this.zoom, cameraSpacePosition.y * this.frustrumHeight/2 * this.zoom);
+        const relativeOffset = new Vector2(cameraSpacePosition.x * this.frustrumWidth / 2 * this.zoom, cameraSpacePosition.y * this.frustrumHeight / 2 * this.zoom);
         return new Vector2(this.position.x + relativeOffset.x, this.position.y + relativeOffset.y);
     }
 
@@ -126,7 +136,7 @@ export class Camera {
 
     render() {
         this.renderBackground();
-        
+
         this.board.context.fillStyle = "#00000000";
         this.board.context.clearRect(0, 0, this.board.element.width, this.board.element.height);
         this.board.context.fillStyle = "tomato";
@@ -134,11 +144,11 @@ export class Camera {
         var br = this.convertWorldCoordToRaster(new Vector2(1, -1));
         var w = br.x - tl.x
         var h = br.y - tl.y
-        this.board.context.fillRect(tl.x, tl.y, w,h );
-        
+        this.board.context.fillRect(tl.x, tl.y, w, h);
+
         this.board.context.fillStyle = "cyan";
 
-        tl = this.convertWorldCoordToRaster(new Vector2(this.inputHandler.mousePos.x-0.1, this.inputHandler.mousePos.y+0.1));
+        tl = this.convertWorldCoordToRaster(new Vector2(this.inputHandler.mousePos.x - 0.1, this.inputHandler.mousePos.y + 0.1));
         br = this.convertWorldCoordToRaster(new Vector2(this.inputHandler.mousePos.x + 0.1, this.inputHandler.mousePos.y - 0.1));
         w = br.x - tl.x
         h = br.y - tl.y

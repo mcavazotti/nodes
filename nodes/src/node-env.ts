@@ -59,7 +59,6 @@ export class NodeEnviroment {
                 this.inputHandler.setState({ mouseButtonDown: [mouseButton] })
         });
 
-
         this.input.element.addEventListener("mouseup", (event) => {
 
             var mouseButton: MouseInputType | null = null;
@@ -80,6 +79,14 @@ export class NodeEnviroment {
             }
             if (mouseButton != null)
                 this.inputHandler.setState({ mouseButtonUp: [mouseButton] })
+        });
+
+        this.input.element.addEventListener("wheel", (event) => {
+            let wheelDirection = event.deltaY < 0 ? MouseInputType.scrollUp: MouseInputType.scrollDown;
+            this.inputHandler.setState({mouseScroll: wheelDirection});
+
+            this.camera.render();
+
         });
     }
 

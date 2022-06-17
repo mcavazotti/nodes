@@ -6,4 +6,5 @@ export interface InputState {
     mouseButtonDown?: MouseInputType[];
     mouseButtonUp?: MouseInputType[];
     mouseMovement?: Vector2;
+    mouseScroll?: MouseInputType.scrollDown | MouseInputType.scrollUp | null;
 }
