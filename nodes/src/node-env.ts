@@ -26,10 +26,11 @@ export class NodeEnviroment {
     start() {
         this.camera.render();
         this.input.element.addEventListener("mousemove", (event) => {
-            let vec = new Vector2(event.x, event.y);
+            let rect = this.input.element.getBoundingClientRect()
+            let vec = new Vector2(event.clientX - rect.left, event.clientY - rect.top);
             let transformedVec = this.camera.convertRasterCoordToWorld(vec);
             // console.log("new")
-            console.log(transformedVec)
+            // console.log(transformedVec)
 
             this.inputHandler.setState({ mousePosition: transformedVec });
 

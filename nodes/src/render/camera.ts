@@ -22,6 +22,7 @@ export class Camera {
 
     private inputHandler: InputHandler;
     private moveCamera: boolean = false;
+    private mousePos!: Vector2;
 
     bgOptions: CameraBGOptions;
 
@@ -60,6 +61,7 @@ export class Camera {
         this.inputHandler.addEventListener(InputEventType.mousedown, (e) => {
             // console.log(e);
             this.moveCamera = e.mouseButtonDown!.indexOf(MouseInputType.leftButton) != -1;
+            this.mousePos = e.mousePosition!;
         });
         this.inputHandler.addEventListener(InputEventType.mouseup, (e) => {
             // console.log(e);
@@ -67,7 +69,7 @@ export class Camera {
         });
         this.inputHandler.addEventListener(InputEventType.mousemove, (e) => {
             if (this.moveCamera) {
-                this.position = this.position.sub(e.mouseMovement!);
+                this.position = this.position.sub(e.mousePosition!.sub(this.mousePos));
                 // console.log(e.mouseMovement);
                 // console.log(this.position);
             }
@@ -85,9 +87,9 @@ export class Camera {
     }
 
     convertRasterCoordToWorld(vec: Vector2): Vector2 {
-        const cameraSpacePosition = new Vector2((vec.x - this.canvasDimention.x / 2) / (this.canvasDimention.x / 2), (vec.y - this.canvasDimention.y / 2) / (this.canvasDimention.y / 2));
-        const relativeOffset = new Vector2(cameraSpacePosition.x * this.frustrumWidth * this.zoom, cameraSpacePosition.y * this.frustrumHeight * this.zoom);
-        return new Vector2(this.position.x + relativeOffset.x, this.position.y - relativeOffset.y);
+        const cameraSpacePosition = new Vector2((vec.x - this.canvasDimention.x / 2) / (this.canvasDimention.x / 2), -(vec.y - this.canvasDimention.y / 2) / (this.canvasDimention.y / 2));
+        const relativeOffset = new Vector2(cameraSpacePosition.x * this.frustrumWidth/2 * this.zoom, cameraSpacePosition.y * this.frustrumHeight/2 * this.zoom);
+        return new Vector2(this.position.x + relativeOffset.x, this.position.y + relativeOffset.y);
     }
 
     renderBackground(): void {
@@ -133,5 +135,14 @@ export class Camera {
         var w = br.x - tl.x
         var h = br.y - tl.y
         this.board.context.fillRect(tl.x, tl.y, w,h );
+        
+        this.board.context.fillStyle = "cyan";
+
+        tl = this.convertWorldCoordToRaster(new Vector2(this.inputHandler.mousePos.x-0.1, this.inputHandler.mousePos.y+0.1));
+        br = this.convertWorldCoordToRaster(new Vector2(this.inputHandler.mousePos.x + 0.1, this.inputHandler.mousePos.y - 0.1));
+        w = br.x - tl.x
+        h = br.y - tl.y
+        this.board.context.fillRect(tl.x, tl.y, w, h);
+
     }
 }

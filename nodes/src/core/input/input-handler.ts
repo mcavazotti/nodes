@@ -7,8 +7,13 @@ export class InputHandler {
     private eventListeners: Map<InputEventType, ((e: InputState) => void)[]>;
     private inputState: InputState;
 
+    
+    public get mousePos() : Vector2 {
+        return this.inputState.mousePosition!.copy();
+    }
+    
+
     private constructor() {
-        console.log("AQUIIII")
         this.eventListeners = new Map();
         this.inputState = {
             mousePosition: new Vector2(),
