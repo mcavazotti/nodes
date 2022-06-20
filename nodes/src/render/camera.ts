@@ -80,7 +80,7 @@ export class Camera {
                     this.zoom = this.zoom == 1 ? 1 : this.zoom - 1;
                     break;
                 case MouseInputType.scrollDown:
-                    this.zoom++;
+                    this.zoom = this.zoom == 20? 20: this.zoom + 1;
                     break;
             }
         });
@@ -105,30 +105,34 @@ export class Camera {
     renderBackground(): void {
         this.bg.context.fillStyle = this.bgOptions.bgColor!;
         this.bg.context.fillRect(0, 0, this.bg.element.width, this.bg.element.height);
-        const topLeftCorner = new Vector2(this.position.x - (this.frustrumWidth * this.zoom / 2), this.position.y + (this.frustrumHeight * this.zoom / 2));
+        const bottomLeftCorner = new Vector2(this.position.x - (this.frustrumWidth * this.zoom / 2), this.position.y - (this.frustrumHeight * this.zoom / 2));
 
         var linePos = this.bgOptions.offset!.copy();
 
-        const deltaX = topLeftCorner.x - linePos.x;
-        const deltaY = topLeftCorner.x - linePos.y;
-        const verticalLinesRepetitions = deltaX > 0 ? Math.floor(deltaX / this.bgOptions.lineSpacing!.x) : Math.ceil(deltaX / this.bgOptions.lineSpacing!.x);
-        const horizontalLinesRepetitions = deltaY > 0 ? Math.floor(deltaY / this.bgOptions.lineSpacing!.y) : Math.ceil(deltaY / this.bgOptions.lineSpacing!.y);
-        linePos.x = linePos.x + this.bgOptions.lineSpacing!.x * verticalLinesRepetitions;
-        linePos.y = linePos.y + this.bgOptions.lineSpacing!.y * horizontalLinesRepetitions;
+        const deltaX = bottomLeftCorner.x - linePos.x;
+        const deltaY = bottomLeftCorner.y - linePos.y;
+
+        const spacing = this.bgOptions.lineSpacing!.scale(Math.pow(2,Math.floor(this.zoom / 5)))
+
+        const verticalLinesRepetitions = deltaX > 0 ? Math.floor(deltaX / spacing.x) : Math.ceil(deltaX / spacing.x);
+        const horizontalLinesRepetitions = deltaY > 0 ? Math.floor(deltaY / spacing.y) : Math.ceil(deltaY / spacing.y);
+        linePos.x = linePos.x + spacing.x * verticalLinesRepetitions;
+        linePos.y = linePos.y + spacing.y * horizontalLinesRepetitions;
 
         this.bg.context.lineWidth = this.bgOptions.lineThickness!;
         this.bg.context.strokeStyle = this.bgOptions.lineColor!;
 
         this.bg.context.beginPath();
-        while (linePos.x < this.position.x + this.frustrumWidth) {
+        while (linePos.x < this.position.x + this.frustrumWidth * this.zoom) {
             this.bg.context.moveTo(this.convertWorldCoordToRaster(linePos).x, 0);
+
             this.bg.context.lineTo(this.convertWorldCoordToRaster(linePos).x, this.bg.element.height);
-            linePos.x += this.bgOptions.lineSpacing!.x;
+            linePos.x += spacing.x;
         }
-        while (linePos.y < this.position.y + this.frustrumHeight) {
+        while (linePos.y < this.position.y + this.frustrumHeight * this.zoom) {
             this.bg.context.moveTo(0, this.convertWorldCoordToRaster(linePos).y);
             this.bg.context.lineTo(this.bg.element.width, this.convertWorldCoordToRaster(linePos).y);
-            linePos.y += this.bgOptions.lineSpacing!.y;
+            linePos.y += spacing.y;
         }
         this.bg.context.stroke();
 
