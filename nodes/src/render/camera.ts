@@ -1,17 +1,13 @@
 import { Canvas } from "../core/html-interface/canvas.js";
 import { InputEventType } from "../core/input/input-events.js";
 import { InputHandler } from "../core/input/input-handler.js";
-import { InputState } from "../core/input/input-state.js";
 import { MouseInputType } from "../core/input/input-types.js";
 import { Vector2 } from "../core/math/vector.js";
+import { BaseNode } from "../node/node-defs/base-node.js";
+import { BgStyle, DefaultBgStyle } from "./styles/bg-style.js";
+import { DefaultNodeStyle, NodeStyle } from "./styles/node-style.js";
 
-export interface CameraBGOptions {
-    bgColor?: string,
-    lineColor?: string,
-    lineThickness?: number,
-    lineSpacing?: Vector2,
-    offset?: Vector2
-}
+
 
 export class Camera {
     position: Vector2;
@@ -24,18 +20,18 @@ export class Camera {
     private moveCamera: boolean = false;
     private mousePos!: Vector2;
 
-    bgOptions: CameraBGOptions;
-
     bg: Canvas;
     board: Canvas;
 
+    bgStyle: BgStyle;
+    nodeStyle: NodeStyle;
 
     public get canvasDimention(): Vector2 {
         return new Vector2(this.bg.element.width, this.bg.element.height);
     }
 
 
-    constructor(bg: Canvas, board: Canvas, position: Vector2 = new Vector2(0, 0), frustrumWidth: number = 10, zoom: number = 1, bgOpts: CameraBGOptions = {}) {
+    constructor(bg: Canvas, board: Canvas, position: Vector2 = new Vector2(0, 0), frustrumWidth: number = 10, zoom: number = 1, bgStyle: BgStyle = {}, nodeStyle: NodeStyle = {}) {
         this.inputHandler = InputHandler.getInstance();
 
         this.position = position;
@@ -49,13 +45,14 @@ export class Camera {
 
         this.frustrumHeight = this.frustrumWidth / this.aspectRatio;
 
-        this.bgOptions = {
-            bgColor: "#5d667a",
-            lineColor: "#00000044",
-            lineThickness: 1,
-            lineSpacing: new Vector2(1, 1),
-            offset: new Vector2(0, 0),
-            ...bgOpts
+        this.bgStyle = {
+            ...DefaultBgStyle,
+            ...bgStyle
+        }
+
+        this.nodeStyle = {
+            ...DefaultNodeStyle,
+            ...nodeStyle
         }
 
         this.inputHandler.addEventListener(InputEventType.mousedown, (e) => {
@@ -80,7 +77,7 @@ export class Camera {
                     this.zoom = this.zoom == 1 ? 1 : this.zoom - 1;
                     break;
                 case MouseInputType.scrollDown:
-                    this.zoom = this.zoom == 20? 20: this.zoom + 1;
+                    this.zoom = this.zoom == 20 ? 20 : this.zoom + 1;
                     break;
             }
         });
@@ -102,25 +99,37 @@ export class Camera {
         return new Vector2(this.position.x + relativeOffset.x, this.position.y + relativeOffset.y);
     }
 
+    convertUnitToPixel(unit: number): number {
+        return this.canvasDimention.x / this.frustrumWidth * this.zoom;
+    }
+
+    convertPixelToUnit(pixel: number): number {
+        return this.frustrumWidth * this.zoom / this.canvasDimention.x;
+    }
+
+    realPixelSize(size: number) {
+        return size / this.zoom;
+    }
+
     renderBackground(): void {
-        this.bg.context.fillStyle = this.bgOptions.bgColor!;
+        this.bg.context.fillStyle = this.bgStyle.bgColor!;
         this.bg.context.fillRect(0, 0, this.bg.element.width, this.bg.element.height);
         const bottomLeftCorner = new Vector2(this.position.x - (this.frustrumWidth * this.zoom / 2), this.position.y - (this.frustrumHeight * this.zoom / 2));
 
-        var linePos = this.bgOptions.offset!.copy();
+        var linePos = this.bgStyle.offset!.copy();
 
         const deltaX = bottomLeftCorner.x - linePos.x;
         const deltaY = bottomLeftCorner.y - linePos.y;
 
-        const spacing = this.bgOptions.lineSpacing!.scale(Math.pow(2,Math.floor(this.zoom / 5)))
+        const spacing = this.bgStyle.lineSpacing!.scale(Math.pow(2, Math.floor(this.zoom / 5)))
 
         const verticalLinesRepetitions = deltaX > 0 ? Math.floor(deltaX / spacing.x) : Math.ceil(deltaX / spacing.x);
         const horizontalLinesRepetitions = deltaY > 0 ? Math.floor(deltaY / spacing.y) : Math.ceil(deltaY / spacing.y);
         linePos.x = linePos.x + spacing.x * verticalLinesRepetitions;
         linePos.y = linePos.y + spacing.y * horizontalLinesRepetitions;
 
-        this.bg.context.lineWidth = this.bgOptions.lineThickness!;
-        this.bg.context.strokeStyle = this.bgOptions.lineColor!;
+        this.bg.context.lineWidth = this.bgStyle.lineThickness!;
+        this.bg.context.strokeStyle = this.bgStyle.lineColor!;
 
         this.bg.context.beginPath();
         while (linePos.x < this.position.x + this.frustrumWidth * this.zoom) {
@@ -138,25 +147,85 @@ export class Camera {
 
     }
 
-    render() {
-        this.renderBackground();
+    renderNodes(nodes: BaseNode[]) {
+        for (const node of nodes) {
+            this.board.context.fillStyle = this.nodeStyle.bgColor!;
+            this.board.context.font = `${this.nodeStyle.fontSize! + 2}px ${this.nodeStyle.fontFace!}`;
 
+            let longestText = 0;
+
+            for (const socket of node.input) {
+                let textSize = this.board.context.measureText(socket[0].label).width;
+                if (textSize > longestText) longestText = textSize;
+            }
+            for (const socket of node.output) {
+                let textSize = this.board.context.measureText(socket.label).width;
+                if (textSize > longestText) longestText = textSize;
+            }
+
+            let textHeight = this.board.context.measureText(node.label).actualBoundingBoxAscent + this.board.context.measureText(node.label).actualBoundingBoxDescent;
+
+            let headerHeight = textHeight + 2 * this.nodeStyle.textMargin!;
+            let boxHeight = headerHeight + 20 + (node.output.length + node.input.size) * (textHeight + this.nodeStyle.textMargin!);
+
+            let boxWidth = longestText + 50 + this.nodeStyle.textMargin! * 2;
+            let rasterPos = this.convertWorldCoordToRaster(node.position);
+            this.board.context.fillRect(rasterPos.x, rasterPos.y, this.realPixelSize(boxWidth), this.realPixelSize(boxHeight))
+
+
+            this.board.context.font = `bold ${this.realPixelSize(this.nodeStyle.fontSize!)}px ${this.nodeStyle.fontFace!}`;
+
+            let realMargin = this.realPixelSize(this.nodeStyle.textMargin!);
+
+
+
+            this.board.context.fillStyle = this.nodeStyle.headerColors!.get(node.type)!;
+            this.board.context.fillRect(rasterPos.x, rasterPos.y, this.realPixelSize(boxWidth), this.realPixelSize(headerHeight));
+
+
+            this.board.context.fillStyle = this.nodeStyle.fontColor!;
+            this.board.context.fillText(node.label, rasterPos.x + realMargin, rasterPos.y + this.board.context.measureText(node.label).actualBoundingBoxAscent + realMargin);
+
+            this.board.context.strokeStyle = this.nodeStyle.borderStyle!;
+
+            this.board.context.strokeRect(rasterPos.x, rasterPos.y, this.realPixelSize(boxWidth), this.realPixelSize(boxHeight));
+
+
+        }
+    }
+
+    render(nodes?: BaseNode[]) {
+        console.log(this.canvasDimention.x / this.frustrumWidth * this.zoom)
+        console.log(this.canvasDimention.y / this.frustrumHeight * this.zoom)
+
+        this.renderBackground();
         this.board.context.fillStyle = "#00000000";
         this.board.context.clearRect(0, 0, this.board.element.width, this.board.element.height);
-        this.board.context.fillStyle = "tomato";
-        var tl = this.convertWorldCoordToRaster(new Vector2(-1, 1));
-        var br = this.convertWorldCoordToRaster(new Vector2(1, -1));
-        var w = br.x - tl.x
-        var h = br.y - tl.y
-        this.board.context.fillRect(tl.x, tl.y, w, h);
 
-        this.board.context.fillStyle = "cyan";
+        if (nodes) {
+            this.renderNodes(nodes);
+        }
 
-        tl = this.convertWorldCoordToRaster(new Vector2(this.inputHandler.mousePos.x - 0.1, this.inputHandler.mousePos.y + 0.1));
-        br = this.convertWorldCoordToRaster(new Vector2(this.inputHandler.mousePos.x + 0.1, this.inputHandler.mousePos.y - 0.1));
-        w = br.x - tl.x
-        h = br.y - tl.y
-        this.board.context.fillRect(tl.x, tl.y, w, h);
+        // this.board.context.fillStyle = "tomato";
+        // var tl = this.convertWorldCoordToRaster(new Vector2(-1, 1));
+        // var br = this.convertWorldCoordToRaster(new Vector2(1, -1));
+        // var w = br.x - tl.x
+        // var h = br.y - tl.y
+        // this.board.context.fillRect(tl.x, tl.y, w, h);
+
+        // this.board.context.fillStyle = "cyan";
+
+        // let center = this.convertWorldCoordToRaster(new Vector2());
+        // this.board.context.font = `${Math.floor(30 / this.zoom)}px Arial`
+        // this.board.context.textAlign = "center";
+        // this.board.context.fillText("Teste", center.x, center.y);
+
+
+        // tl = this.convertWorldCoordToRaster(new Vector2(this.inputHandler.mousePos.x - 0.1, this.inputHandler.mousePos.y + 0.1));
+        // br = this.convertWorldCoordToRaster(new Vector2(this.inputHandler.mousePos.x + 0.1, this.inputHandler.mousePos.y - 0.1));
+        // w = br.x - tl.x
+        // h = br.y - tl.y
+        // this.board.context.fillRect(tl.x, tl.y, w, h);
 
     }
 }
