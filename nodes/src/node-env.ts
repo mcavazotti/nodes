@@ -3,6 +3,7 @@ import { Canvas } from "./core/html-interface/canvas.js";
 import { Vector2 } from "./core/math/vector.js";
 import { InputHandler } from "./core/input/input-handler.js";
 import { MouseInputType } from "./core/input/input-types.js";
+import { NodeEngine } from "./node/node-engine.js";
 
 export class NodeEnviroment {
     private bg: Canvas;
@@ -10,9 +11,11 @@ export class NodeEnviroment {
     private input: Canvas;
     private camera: Camera;
     private inputHandler: InputHandler;
+    private engine: NodeEngine;
 
     constructor(bg: Canvas, board: Canvas, input: Canvas) {
         this.inputHandler = InputHandler.getInstance();
+        this.engine = NodeEngine.getInstance();
         this.bg = bg;
         this.board = board;
         this.input = input;
@@ -24,17 +27,20 @@ export class NodeEnviroment {
 
     }
     start() {
-        this.camera.render();
+        this.camera.render(this.engine.nodes);
+
+        this.input.element.addEventListener("contextmenu", (event) => {
+            event.preventDefault();
+        });
+
         this.input.element.addEventListener("mousemove", (event) => {
             let rect = this.input.element.getBoundingClientRect()
             let vec = new Vector2(event.clientX - rect.left, event.clientY - rect.top);
             let transformedVec = this.camera.convertRasterCoordToWorld(vec);
-            // console.log("new")
-            // console.log(transformedVec)
 
-            this.inputHandler.setState({ mousePosition: transformedVec });
+            this.inputHandler.setState({ mousePosition: transformedVec, mouseRawPosition: vec });
 
-            this.camera.render();
+            this.camera.render(this.engine.nodes);
         });
 
         this.input.element.addEventListener("mousedown", (event) => {
@@ -85,7 +91,7 @@ export class NodeEnviroment {
             let wheelDirection = event.deltaY < 0 ? MouseInputType.scrollUp: MouseInputType.scrollDown;
             this.inputHandler.setState({mouseScroll: wheelDirection});
 
-            this.camera.render();
+            this.camera.render(this.engine.nodes);
 
         });
     }
