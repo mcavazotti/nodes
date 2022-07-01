@@ -5,7 +5,9 @@ interface BgStyle {
     lineColor?: string,
     lineThickness?: number,
     lineSpacing?: Vector2,
-    offset?: Vector2
+    offset?: Vector2,
+    activeElementLineColor?: string,
+    activeElementLineThickness?: number,
 }
 
 const DefaultBgStyle: BgStyle = {
@@ -14,6 +16,8 @@ const DefaultBgStyle: BgStyle = {
     lineThickness: 1,
     lineSpacing: new Vector2(1, 1),
     offset: new Vector2(0, 0),
+    activeElementLineColor: '#faee9d',
+    activeElementLineThickness: 3,
 };
 
 export {BgStyle, DefaultBgStyle}

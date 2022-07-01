@@ -6,6 +6,7 @@ import { SocketType } from "../types/socket-types.js";
 import { BaseNode } from "./base-node.js";
 
 export class OutputNode extends BaseNode {
+
     constructor(pos: Vector2) {
         super(pos);
         this._type = NodeClass.output;

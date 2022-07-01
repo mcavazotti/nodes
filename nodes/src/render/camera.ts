@@ -9,6 +9,7 @@ import { BgStyle, DefaultBgStyle } from "./styles/bg-style.js";
 import { DefaultNodeStyle, NodeStyle } from "./styles/node-style.js";
 import * as primitives from "./primitives.js"
 import { ColorRGB } from "../core/color/color.js";
+import { Selectable, SelectableType } from "../core/selectable/selectable.js";
 
 
 
@@ -125,6 +126,7 @@ export class Camera {
         primitives.circle(this.board.context, pos, realSocketRadius);
         this.board.context.fill();
         this.board.context.strokeStyle = color.scale(0.6).toHex();
+        this.board.context.lineWidth = this.nodeStyle.borderThickness!;
         this.board.context.stroke();
 
         this.board.context.textAlign = input ? "left" : "right";
@@ -169,79 +171,90 @@ export class Camera {
 
     }
 
-    renderNodes(nodes: BaseNode[]) {
+    private renderNode(node: BaseNode, selected:boolean = false) {
         var socketPositions: Map<string, [Socket, Vector2]> = new Map();
 
-        for (const node of nodes) {
-            this.board.context.fillStyle = this.nodeStyle.bgColor!;
-            this.board.context.font = `${this.nodeStyle.fontSize! + 2}px ${this.nodeStyle.fontFace!}`;
+        this.board.context.fillStyle = this.nodeStyle.bgColor!;
+        this.board.context.font = `${this.nodeStyle.fontSize! + 2}px ${this.nodeStyle.fontFace!}`;
 
 
 
-            let rasterPos = this.convertWorldCoordToRaster(node.position);
+        let rasterPos = this.convertWorldCoordToRaster(node.position);
 
-            let longestText = 0;
-            for (const socket of node.input) {
-                let textSize = this.board.context.measureText(socket[0].label).width;
-                if (textSize > longestText) longestText = textSize;
-            }
-            for (const socket of node.output) {
-                let textSize = this.board.context.measureText(socket.label).width;
-                if (textSize > longestText) longestText = textSize;
-            }
+        let longestText = 0;
+        for (const socket of node.input) {
+            let textSize = this.board.context.measureText(socket[0].label).width;
+            if (textSize > longestText) longestText = textSize;
+        }
+        for (const socket of node.output) {
+            let textSize = this.board.context.measureText(socket.label).width;
+            if (textSize > longestText) longestText = textSize;
+        }
 
-            let textHeight = this.board.context.measureText(node.label).actualBoundingBoxAscent + this.board.context.measureText(node.label).actualBoundingBoxDescent;
-            let headerHeight = textHeight + 2 * this.nodeStyle.textMargin!;
-            let boxWidth = longestText + 50 + this.nodeStyle.textMargin! * 2;
-            let realMargin = this.realPixelSize(this.nodeStyle.textMargin!);
+        let textHeight = this.board.context.measureText(node.label).actualBoundingBoxAscent + this.board.context.measureText(node.label).actualBoundingBoxDescent;
+        let headerHeight = textHeight + 2 * this.nodeStyle.textMargin!;
+        let boxWidth = longestText + 50 + this.nodeStyle.textMargin! * 2;
+        let realMargin = this.realPixelSize(this.nodeStyle.textMargin!);
 
-            var offset = headerHeight + textHeight;
-            for (const socket of node.output) {
-                let pos = rasterPos.copy().add(new Vector2(this.realPixelSize(boxWidth), this.realPixelSize(offset)));
-                socketPositions.set(socket.uId, [socket, pos]);
-                offset += this.nodeStyle.textMargin! + textHeight;
-            }
-            for (const socket of Array.from(node.input.entries()).map(s => s[0])) {
-                let pos = rasterPos.copy().add(new Vector2(0, this.realPixelSize(offset)));
-                socketPositions.set(socket.uId, [socket, pos]);
-                offset += this.nodeStyle.textMargin! + textHeight;
-            }
-
-
-
-
-            let boxHeight = offset;
-
-            this.board.context.fillRect(rasterPos.x, rasterPos.y, this.realPixelSize(boxWidth), this.realPixelSize(boxHeight));
-
-
-            this.board.context.font = `bold ${this.realPixelSize(this.nodeStyle.fontSize!)}px ${this.nodeStyle.fontFace!}`;
+        var offset = headerHeight + textHeight;
+        for (const socket of node.output) {
+            let pos = rasterPos.copy().add(new Vector2(this.realPixelSize(boxWidth), this.realPixelSize(offset)));
+            socketPositions.set(socket.uId, [socket, pos]);
+            offset += this.nodeStyle.textMargin! + textHeight;
+        }
+        for (const socket of Array.from(node.input.entries()).map(s => s[0])) {
+            let pos = rasterPos.copy().add(new Vector2(0, this.realPixelSize(offset)));
+            socketPositions.set(socket.uId, [socket, pos]);
+            offset += this.nodeStyle.textMargin! + textHeight;
+        }
 
 
 
 
-            this.board.context.fillStyle = this.nodeStyle.headerColors!.get(node.type)!;
-            this.board.context.fillRect(rasterPos.x, rasterPos.y, this.realPixelSize(boxWidth), this.realPixelSize(headerHeight));
+        let boxHeight = offset;
+
+        this.board.context.fillRect(rasterPos.x, rasterPos.y, this.realPixelSize(boxWidth), this.realPixelSize(boxHeight));
 
 
-            this.board.context.fillStyle = this.nodeStyle.fontColor!;
-            this.board.context.fillText(node.label, rasterPos.x + realMargin, rasterPos.y + this.board.context.measureText(node.label).actualBoundingBoxAscent + realMargin);
+        this.board.context.font = `bold ${this.realPixelSize(this.nodeStyle.fontSize!)}px ${this.nodeStyle.fontFace!}`;
 
+
+
+
+        this.board.context.fillStyle = this.nodeStyle.headerColors!.get(node.type)!;
+        this.board.context.fillRect(rasterPos.x, rasterPos.y, this.realPixelSize(boxWidth), this.realPixelSize(headerHeight));
+
+
+        this.board.context.fillStyle = this.nodeStyle.fontColor!;
+        this.board.context.fillText(node.label, rasterPos.x + realMargin, rasterPos.y + this.board.context.measureText(node.label).actualBoundingBoxAscent + realMargin);
+
+        if(selected){
+            this.board.context.strokeStyle = this.bgStyle.activeElementLineColor!;
+            this.board.context.lineWidth = this.bgStyle.activeElementLineThickness!;
+        }else {
             this.board.context.strokeStyle = this.nodeStyle.borderStyle!;
-
-            this.board.context.strokeRect(rasterPos.x, rasterPos.y, this.realPixelSize(boxWidth), this.realPixelSize(boxHeight));
-
-
-            this.board.context.font = `${this.realPixelSize(this.nodeStyle.fontSize! - 2)}px ${this.nodeStyle.fontFace!}`;
+            this.board.context.lineWidth = this.nodeStyle.borderThickness!;
+        }
+        this.board.context.strokeRect(rasterPos.x, rasterPos.y, this.realPixelSize(boxWidth), this.realPixelSize(boxHeight));
 
 
-            for (const socket of node.output) {
-                this.drawSocket(socket, socketPositions, false);
-            }
+        this.board.context.font = `${this.realPixelSize(this.nodeStyle.fontSize! - 2)}px ${this.nodeStyle.fontFace!}`;
 
-            for (const socket of Array.from(node.input.entries()).map(s => s[0])) {
-                this.drawSocket(socket, socketPositions);
-            }
+
+        for (const socket of node.output) {
+            this.drawSocket(socket, socketPositions, false);
+        }
+
+        for (const socket of Array.from(node.input.entries()).map(s => s[0])) {
+            this.drawSocket(socket, socketPositions);
+        }
+    }
+
+    renderNodes(nodes: BaseNode[]) {
+        // var socketPositions: Map<string, [Socket, Vector2]> = new Map();
+
+        for (const node of nodes) {
+            this.renderNode(node);
         }
     }
 
@@ -252,6 +265,7 @@ export class Camera {
         this.renderBackground();
         this.board.context.fillStyle = "#00000000";
         this.board.context.clearRect(0, 0, this.board.element.width, this.board.element.height);
+
 
         if (nodes) {
             this.renderNodes(nodes);

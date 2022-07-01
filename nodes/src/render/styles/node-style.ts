@@ -8,6 +8,7 @@ interface NodeStyle {
     fontSize?: number;
     fontColor?: string;
     textMargin?: number;
+    borderThickness?: number;
     headerColors?: Map<NodeClass, string>;
     socketColors?: Map<SocketType, string>;
     socketRadius?: number;
@@ -20,6 +21,7 @@ const DefaultNodeStyle: NodeStyle = {
     fontSize: 16,
     fontColor: "white",
     textMargin: 3,
+    borderThickness: 1,
     headerColors: new Map([[NodeClass.output, "tomato"]]),
     socketColors: new Map([[SocketType.color, "cyan"],[SocketType.vector3,"teal"]]),
     socketRadius: 5,
