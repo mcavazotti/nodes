@@ -11,7 +11,7 @@ export class OutputNode extends BaseNode {
         super(pos);
         this._type = NodeClass.output;
         this._label = "Output"
-        this._input = new Map([[{ label: "Color", type: SocketType.color, uId: "i-0", conection: null }, new ColorRGBA(0, 0, 0, 1)]]);
+        this._input = new Map([[{ label: "Color", type: SocketType.color, conection: null }, new ColorRGBA(0, 0, 0, 1)]]);
         this._output = [];
     }
 

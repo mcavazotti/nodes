@@ -62,11 +62,16 @@ export class LayoutGenerator {
                 socket: socket,
                 postition: node.position.sub(new Vector2(-camera.convertPixelToUnit(boxWidth, true), camera.convertPixelToUnit(offset, true))),
                 labelPostion: new Vector2(),
-                labelAlign: "right"
+                labelAlign: "right",
+                topLeft: new Vector2(),
+                size: new Vector2()
             };
             socketLayout.labelPostion = socketLayout.postition.sub(new Vector2(camera.convertPixelToUnit(camera.nodeStyle.textMargin! + camera.nodeStyle.socketRadius!, true), 0));
+            let realRadius = camera.convertPixelToUnit(camera.nodeStyle.socketRadius!, true);
+            socketLayout.topLeft = socketLayout.postition.add(new Vector2(-realRadius,realRadius));
+            socketLayout.size = new Vector2(2 * camera.nodeStyle.socketRadius!, 2 * camera.nodeStyle.socketRadius!);
 
-            layout.socketLayouts.set(socket.uId, socketLayout);
+            layout.socketLayouts.set(socket.uId!, socketLayout);
             offset += camera.nodeStyle.textMargin! + textHeight;
         }
 
@@ -75,11 +80,16 @@ export class LayoutGenerator {
                 socket: socket[0],
                 postition: node.position.sub(new Vector2(0, camera.convertPixelToUnit(offset, true))),
                 labelPostion: new Vector2(),
-                labelAlign: "left"
+                labelAlign: "left",
+                topLeft: new Vector2(),
+                size: new Vector2()
             };
             socketLayout.labelPostion = socketLayout.postition.add(new Vector2(camera.convertPixelToUnit(camera.nodeStyle.textMargin! + camera.nodeStyle.socketRadius!, true), 0));
+            let realRadius = camera.convertPixelToUnit(camera.nodeStyle.socketRadius!, true);
+            socketLayout.topLeft = socketLayout.postition.add(new Vector2(-realRadius, realRadius));
+            socketLayout.size = new Vector2(2 * camera.nodeStyle.socketRadius!, 2 * camera.nodeStyle.socketRadius!);
 
-            layout.socketLayouts.set(socket[0].uId, socketLayout);
+            layout.socketLayouts.set(socket[0].uId!, socketLayout);
             offset += camera.nodeStyle.textMargin! + textHeight;
         }
 

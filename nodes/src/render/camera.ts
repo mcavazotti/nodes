@@ -209,6 +209,25 @@ export class Camera {
         }
     }
 
+    renderLayout(nodes: NodeLayout[]) {
+        this.board.context.fillStyle = "#45bbffaa";
+        for (const node of nodes) {
+            let rasterPos = this.convertWorldCoordToRaster(node.position);
+            let rasterDim = new Vector2(this.realPixelSize(node.size.x), this.realPixelSize(node.size.y))
+            this.board.context.fillRect(rasterPos.x, rasterPos.y, rasterDim.x, rasterDim.y);   
+        }
+        
+        this.board.context.fillStyle = "#ffc745aa";
+        for (const node of nodes) {
+            for (const socket of node.socketLayouts) {
+                let rasterPos = this.convertWorldCoordToRaster(socket[1].topLeft);
+                
+                let rasterDim = new Vector2(this.realPixelSize(socket[1].size.x), this.realPixelSize(socket[1].size.y))
+                this.board.context.fillRect(rasterPos.x, rasterPos.y, rasterDim.x, rasterDim.y);   
+            }
+        }
+    }
+
     render(nodes?: NodeLayout[]) {
         // console.log(this.canvasDimention.x / this.frustrumWidth * this.zoom)
         // console.log(this.canvasDimention.y / this.frustrumHeight * this.zoom)
@@ -220,28 +239,8 @@ export class Camera {
 
         if (nodes) {
             this.renderNodes(nodes);
+            // this.renderLayout(nodes);
         }
-
-        // this.board.context.fillStyle = "tomato";
-        // var tl = this.convertWorldCoordToRaster(new Vector2(-1, 1));
-        // var br = this.convertWorldCoordToRaster(new Vector2(1, -1));
-        // var w = br.x - tl.x
-        // var h = br.y - tl.y
-        // this.board.context.fillRect(tl.x, tl.y, w, h);
-
-        // this.board.context.fillStyle = "cyan";
-
-        // let center = this.convertWorldCoordToRaster(new Vector2());
-        // this.board.context.font = `${Math.floor(30 / this.zoom)}px Arial`
-        // this.board.context.textAlign = "center";
-        // this.board.context.fillText("Teste", center.x, center.y);
-
-
-        // tl = this.convertWorldCoordToRaster(new Vector2(this.inputHandler.mousePos.x - 0.1, this.inputHandler.mousePos.y + 0.1));
-        // br = this.convertWorldCoordToRaster(new Vector2(this.inputHandler.mousePos.x + 0.1, this.inputHandler.mousePos.y - 0.1));
-        // w = br.x - tl.x
-        // h = br.y - tl.y
-        // this.board.context.fillRect(tl.x, tl.y, w, h);
 
     }
 }
