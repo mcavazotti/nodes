@@ -1,7 +1,7 @@
 import { Canvas } from "../core/html-interface/canvas.js";
-import { InputEventType } from "../core/input/input-events.js";
-import { InputHandler } from "../core/input/input-handler.js";
-import { MouseInputType } from "../core/input/input-types.js";
+import { InputEventType } from "../input/input-events.js";
+import { InputHandler } from "../input/input-handler.js";
+import { MouseInputType } from "../input/input-types.js";
 import { Vector2 } from "../core/math/vector.js";
 import { BaseNode } from "../node/node-defs/base-node.js";
 import { Socket } from "../node/types/socket.js";
@@ -10,7 +10,7 @@ import { DefaultNodeStyle, NodeStyle } from "./styles/node-style.js";
 import * as primitives from "./primitives.js"
 import { ColorRGB } from "../core/color/color.js";
 import { Selectable, SelectableType } from "../core/selectable/selectable.js";
-import { NodeLayout } from "../layout/node-layout.js";
+import { NodeElement } from "../layout/layout-elements.js";
 
 
 
@@ -152,7 +152,7 @@ export class Camera {
 
     }
 
-    private renderNode(nodeLayout: NodeLayout, selected: boolean = false) {
+    private renderNode(nodeLayout: NodeElement, selected: boolean = false) {
         this.board.context.fillStyle = this.nodeStyle.bgColor!;
 
         let rasterPos = this.convertWorldCoordToRaster(nodeLayout.position);
@@ -201,7 +201,7 @@ export class Camera {
 
     }
 
-    renderNodes(nodes: NodeLayout[]) {
+    renderNodes(nodes: NodeElement[]) {
         // var socketPositions: Map<string, [Socket, Vector2]> = new Map();
 
         for (const node of nodes) {
@@ -209,7 +209,7 @@ export class Camera {
         }
     }
 
-    renderLayout(nodes: NodeLayout[]) {
+    renderLayout(nodes: NodeElement[]) {
         this.board.context.fillStyle = "#45bbffaa";
         for (const node of nodes) {
             let rasterPos = this.convertWorldCoordToRaster(node.position);
@@ -228,7 +228,7 @@ export class Camera {
         }
     }
 
-    render(nodes?: NodeLayout[]) {
+    render(nodes?: NodeElement[]) {
         // console.log(this.canvasDimention.x / this.frustrumWidth * this.zoom)
         // console.log(this.canvasDimention.y / this.frustrumHeight * this.zoom)
 
@@ -239,7 +239,7 @@ export class Camera {
 
         if (nodes) {
             this.renderNodes(nodes);
-            // this.renderLayout(nodes);
+            this.renderLayout(nodes);
         }
 
     }

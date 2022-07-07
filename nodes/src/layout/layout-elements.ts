@@ -4,22 +4,24 @@ import { Socket } from "../node/types/socket.js";
 
 
 
-interface SocketLayout {
+interface SocketElement {
     socket: Socket
     postition: Vector2;
     topLeft: Vector2;
     size: Vector2;
+    bottomRight: Vector2;
     labelPostion: Vector2;
     labelAlign: "left"|"right";
 }
 
-interface NodeLayout {
+interface NodeElement {
     node: BaseNode;
     position: Vector2;
     headerHeight: number;
     labelPos: Vector2;
     size: Vector2;
-    socketLayouts: Map<string,SocketLayout>;
+    bottomRight: Vector2;
+    socketLayouts: Map<string,SocketElement>;
 }
 
-export {NodeLayout, SocketLayout};
+export {NodeElement, SocketElement};
