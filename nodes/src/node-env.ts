@@ -5,6 +5,8 @@ import { InputHandler } from "./input/input-handler.js";
 import { MouseInputType } from "./input/input-types.js";
 import { NodeEngine } from "./node/node-engine.js";
 import { LayoutManager } from "./layout/layout-manager.js";
+import { UiHandler } from "./ui/ui-handler.js";
+import { ContextManager } from "./context/context-manager.js";
 
 export class NodeEnviroment {
     private bg: Canvas;
@@ -14,6 +16,8 @@ export class NodeEnviroment {
     private inputHandler: InputHandler;
     private engine: NodeEngine;
     private layoutManager: LayoutManager;
+    private uiHandler: UiHandler
+    private contextManager: ContextManager;
 
     constructor(bg: Canvas, board: Canvas, input: Canvas) {
         this.inputHandler = InputHandler.getInstance();
@@ -27,11 +31,13 @@ export class NodeEnviroment {
         
         this.camera = new Camera(this.bg, this.board);
         this.layoutManager = LayoutManager.getInstance(this.camera);
+        this.uiHandler = UiHandler.getInstance(this.camera);
+        this.contextManager = ContextManager.getInstance();
 
     }
     start() {
         this.layoutManager.generateLayout(this.engine.nodes);
-        this.camera.render(this.layoutManager.getLayout().nodes);
+        this.camera.render(this.layoutManager.getLayout().nodes,this.contextManager.context );
 
         this.input.element.addEventListener("contextmenu", (event) => {
             event.preventDefault();
@@ -44,7 +50,7 @@ export class NodeEnviroment {
 
             this.inputHandler.setState({ mousePosition: transformedVec, mouseRawPosition: vec });
 
-            this.camera.render(this.layoutManager.getLayout().nodes);
+            this.camera.render(this.layoutManager.getLayout().nodes, this.contextManager.context);
         });
 
         this.input.element.addEventListener("mousedown", (event) => {
@@ -65,8 +71,10 @@ export class NodeEnviroment {
                 default:
                     break;
             }
-            if (mouseButton != null)
+            if (mouseButton != null){
                 this.inputHandler.setState({ mouseButtonDown: [mouseButton] })
+                this.camera.render(this.layoutManager.getLayout().nodes, this.contextManager.context);   
+            }
         });
 
         this.input.element.addEventListener("mouseup", (event) => {
@@ -95,7 +103,7 @@ export class NodeEnviroment {
             let wheelDirection = event.deltaY < 0 ? MouseInputType.scrollUp: MouseInputType.scrollDown;
             this.inputHandler.setState({mouseScroll: wheelDirection});
 
-            this.camera.render(this.layoutManager.getLayout().nodes);
+            this.camera.render(this.layoutManager.getLayout().nodes, this.contextManager.context);
 
         });
     }

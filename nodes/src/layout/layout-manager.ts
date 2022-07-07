@@ -29,6 +29,7 @@ export class LayoutManager {
     }
 
     getLayout() {
+        // console.log(this.nodeElements.length)
         return {
             nodes: [...this.nodeElements],
             ui: [],
@@ -52,7 +53,7 @@ export class LayoutManager {
                 node: node,
                 position: node.position,
                 headerHeight: 0,
-                labelPos: new Vector2(),
+                labelPosition: new Vector2(),
                 size: new Vector2(),
                 bottomRight: new Vector2(),
                 socketLayouts: new Map<string, SocketElement>()
@@ -65,7 +66,7 @@ export class LayoutManager {
 
             layout.headerHeight = textHeight + 2 * this.activeCamera.nodeStyle.textMargin!;
 
-            layout.labelPos = layout.position.add(new Vector2(this.activeCamera.convertPixelToUnit(this.activeCamera.nodeStyle.textMargin!, true), -(this.activeCamera.convertPixelToUnit(this.activeCamera.nodeStyle.textMargin! + headerLabelMeasurement.actualBoundingBoxAscent, true))));
+            layout.labelPosition = layout.position.add(new Vector2(this.activeCamera.convertPixelToUnit(this.activeCamera.nodeStyle.textMargin!, true), -(this.activeCamera.convertPixelToUnit(this.activeCamera.nodeStyle.textMargin! + headerLabelMeasurement.actualBoundingBoxAscent, true))));
 
             let longestText = headerLabelMeasurement.width;
 
@@ -85,16 +86,16 @@ export class LayoutManager {
             for (const socket of node.output) {
                 let socketLayout: SocketElement = {
                     socket: socket,
-                    postition: node.position.sub(new Vector2(-this.activeCamera.convertPixelToUnit(boxWidth, true), this.activeCamera.convertPixelToUnit(offset, true))),
-                    labelPostion: new Vector2(),
+                    position: node.position.sub(new Vector2(-this.activeCamera.convertPixelToUnit(boxWidth, true), this.activeCamera.convertPixelToUnit(offset, true))),
+                    labelPosition: new Vector2(),
                     labelAlign: "right",
                     topLeft: new Vector2(),
                     bottomRight: new Vector2(),
                     size: new Vector2()
                 };
-                socketLayout.labelPostion = socketLayout.postition.sub(new Vector2(this.activeCamera.convertPixelToUnit(this.activeCamera.nodeStyle.textMargin! + this.activeCamera.nodeStyle.socketRadius!, true), 0));
+                socketLayout.labelPosition = socketLayout.position.sub(new Vector2(this.activeCamera.convertPixelToUnit(this.activeCamera.nodeStyle.textMargin! + this.activeCamera.nodeStyle.socketRadius!, true), 0));
                 let realRadius = this.activeCamera.convertPixelToUnit(this.activeCamera.nodeStyle.socketRadius!, true);
-                socketLayout.topLeft = socketLayout.postition.add(new Vector2(-realRadius, realRadius));
+                socketLayout.topLeft = socketLayout.position.add(new Vector2(-realRadius, realRadius));
                 socketLayout.size = new Vector2(2 * this.activeCamera.nodeStyle.socketRadius!, 2 * this.activeCamera.nodeStyle.socketRadius!);
 
                 layout.socketLayouts.set(socket.uId!, socketLayout);
@@ -104,16 +105,16 @@ export class LayoutManager {
             for (const socket of node.input) {
                 let socketLayout: SocketElement = {
                     socket: socket[0],
-                    postition: node.position.sub(new Vector2(0, this.activeCamera.convertPixelToUnit(offset, true))),
-                    labelPostion: new Vector2(),
+                    position: node.position.sub(new Vector2(0, this.activeCamera.convertPixelToUnit(offset, true))),
+                    labelPosition: new Vector2(),
                     labelAlign: "left",
                     topLeft: new Vector2(),
                     bottomRight: new Vector2(),
                     size: new Vector2(),
                 };
-                socketLayout.labelPostion = socketLayout.postition.add(new Vector2(this.activeCamera.convertPixelToUnit(this.activeCamera.nodeStyle.textMargin! + this.activeCamera.nodeStyle.socketRadius!, true), 0));
+                socketLayout.labelPosition = socketLayout.position.add(new Vector2(this.activeCamera.convertPixelToUnit(this.activeCamera.nodeStyle.textMargin! + this.activeCamera.nodeStyle.socketRadius!, true), 0));
                 let realRadius = this.activeCamera.convertPixelToUnit(this.activeCamera.nodeStyle.socketRadius!, true);
-                socketLayout.topLeft = socketLayout.postition.add(new Vector2(-realRadius, realRadius));
+                socketLayout.topLeft = socketLayout.position.add(new Vector2(-realRadius, realRadius));
                 socketLayout.size = new Vector2(2 * this.activeCamera.nodeStyle.socketRadius!, 2 * this.activeCamera.nodeStyle.socketRadius!);
 
                 layout.socketLayouts.set(socket[0].uId!, socketLayout);

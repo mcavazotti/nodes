@@ -11,6 +11,7 @@ import * as primitives from "./primitives.js"
 import { ColorRGB } from "../core/color/color.js";
 import { Selectable, SelectableType } from "../core/selectable/selectable.js";
 import { NodeElement } from "../layout/layout-elements.js";
+import { Context } from "../context/context-manager.js";
 
 
 
@@ -167,7 +168,7 @@ export class Camera {
         this.board.context.font = `bold ${this.realPixelSize(this.nodeStyle.fontSize!)}px ${this.nodeStyle.fontFace!}`;
         this.board.context.textBaseline = "middle";
         this.board.context.fillStyle = this.nodeStyle.fontColor!;
-        let rasterLabelPos = this.convertWorldCoordToRaster(nodeLayout.labelPos);
+        let rasterLabelPos = this.convertWorldCoordToRaster(nodeLayout.labelPosition);
         this.board.context.fillText(nodeLayout.node.label, rasterLabelPos.x, rasterLabelPos.y);
 
         if (selected) {
@@ -187,7 +188,7 @@ export class Camera {
             let color = new ColorRGB(this.nodeStyle.socketColors!.get(socket[1].socket.type)!);
             
             this.board.context.fillStyle = color.toHex();
-            primitives.circle(this.board.context, this.convertWorldCoordToRaster(socket[1].postition), realSocketRadius);
+            primitives.circle(this.board.context, this.convertWorldCoordToRaster(socket[1].position), realSocketRadius);
             this.board.context.fill();
             this.board.context.strokeStyle = color.scale(0.6).toHex();
             this.board.context.lineWidth = this.nodeStyle.borderThickness!;
@@ -195,17 +196,18 @@ export class Camera {
             
             this.board.context.textAlign = socket[1].labelAlign;
             this.board.context.fillStyle = this.nodeStyle.fontColor!;
-            let rasterSocketLabelPos = this.convertWorldCoordToRaster(socket[1].labelPostion);
+            let rasterSocketLabelPos = this.convertWorldCoordToRaster(socket[1].labelPosition);
             this.board.context.fillText(socket[1].socket.label, rasterSocketLabelPos.x, rasterSocketLabelPos.y);
         }
 
     }
 
-    renderNodes(nodes: NodeElement[]) {
+    renderNodes(nodes: NodeElement[], context?: Context) {
         // var socketPositions: Map<string, [Socket, Vector2]> = new Map();
 
         for (const node of nodes) {
-            this.renderNode(node);
+            let selected: boolean = (!!context && context.activeElement == node);
+            this.renderNode(node, selected);
         }
     }
 
@@ -228,8 +230,8 @@ export class Camera {
         }
     }
 
-    render(nodes?: NodeElement[]) {
-        // console.log(this.canvasDimention.x / this.frustrumWidth * this.zoom)
+    render(nodes?: NodeElement[], context?: Context) {
+        // console.log(nodes?.length)
         // console.log(this.canvasDimention.y / this.frustrumHeight * this.zoom)
 
         this.renderBackground();
@@ -238,8 +240,8 @@ export class Camera {
 
 
         if (nodes) {
-            this.renderNodes(nodes);
-            this.renderLayout(nodes);
+            this.renderNodes(nodes, context);
+            // this.renderLayout(nodes);
         }
 
     }

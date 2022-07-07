@@ -1,10 +1,13 @@
 import { Vector2 } from "../core/math/vector.js";
+import { LayoutElement } from "../layout/layout-elements.js";
 import { LayoutManager } from "../layout/layout-manager.js";
 import { ContextType } from "./context-types.js";
 
 interface Context {
     hover: ContextType;
+    hoverElement: LayoutElement | null;
     active: ContextType;
+    activeElement: LayoutElement | null;
 }
 
 class ContextManager {
@@ -12,6 +15,8 @@ class ContextManager {
     private _context: Context = {
         hover: ContextType.any,
         active: ContextType.any,
+        activeElement: null,
+        hoverElement: null
     }
     get context(): Context {
         return { ...this._context };
@@ -36,13 +41,20 @@ class ContextManager {
         }
         if (layout.nodes) {
             for (const node of layout.nodes) {
-                if (this.isInside(worldPointerPos, node.position, node.bottomRight)){
+                if (this.isInside(worldPointerPos, node.position, node.bottomRight)) {
                     this._context.hover = ContextType.node;
+                    this._context.hoverElement = node;
                     return;
                 }
             }
         }
         this._context.hover = ContextType.board;
+        this._context.hoverElement = null;
+    }
+
+    setActive() {
+        this._context.activeElement = this._context.hoverElement;
+        this._context.active = this._context.hover;
     }
 
     private isInside(pos: Vector2, topLeft: Vector2, bottomRight: Vector2): boolean {
