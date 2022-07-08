@@ -1,6 +1,6 @@
 import { Canvas } from "../core/html-interface/canvas.js";
 import { Vector2 } from "../core/math/vector.js";
-import { BaseNode } from "../node/node-defs/base-node.js";
+import { BaseNode } from "../node/definitions.js";
 import { NodeEngine } from "../node/node-engine.js";
 import { Camera } from "../render/camera.js";
 import { NodeElement, SocketElement } from "./layout-elements.js";

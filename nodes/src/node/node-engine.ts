@@ -1,6 +1,5 @@
 import { Vector2 } from "../core/math/vector.js";
-import { BaseNode } from "./node-defs/base-node.js";
-import { OutputNode } from "./node-defs/output-node.js";
+import { BaseNode, OutputNode } from "./definitions.js";
 
 export class NodeEngine{
     
