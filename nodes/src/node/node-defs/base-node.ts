@@ -5,8 +5,8 @@ import { Socket } from "../types/socket.js";
 export abstract class BaseNode {
     protected _label!: string;
     protected _type!: NodeClass;
-    protected _input!: Map<Socket, any>;
-    protected _output!: Socket[];
+    protected _input!: Socket<any>[];
+    protected _output!: Socket<any>[];
 
     private static idCounter: number = 0;
     
@@ -27,11 +27,13 @@ export abstract class BaseNode {
     protected setSocketsId() {
         let id = 0;
         for (const socket of this._input) {
-            socket[0].uId = `n-${this.uId.toString().padStart(4, '0')}-i-${id.toString().padStart(4, '0') }`;
+            socket.uId = `n-${this.uId.toString().padStart(4, '0')}-i-${id.toString().padStart(4, '0') }`;
+            id++;
         }
         
         for (const socket of this._output) {
             socket.uId = `n-${this.uId.toString().padStart(4, '0')}-o-${id.toString().padStart(4, '0') }`;
+            id++;
         }
     }
 

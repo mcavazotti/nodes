@@ -1,7 +1,6 @@
 import { ColorRGBA } from "../../core/color/color.js";
 import { Vector2 } from "../../core/math/vector.js";
 import { NodeClass } from "../types/node-classes.js";
-import { Socket } from "../types/socket.js";
 import { SocketType } from "../types/socket-types.js";
 import { BaseNode } from "./base-node.js";
 
@@ -11,8 +10,13 @@ export class OutputNode extends BaseNode {
         super(pos);
         this._type = NodeClass.output;
         this._label = "Output"
-        this._input = new Map([[{ label: "Color", type: SocketType.color, conection: null }, new ColorRGBA(0, 0, 0, 1)]]);
+        this._input = [
+            { label: "Color", type: SocketType.color, conection: null,value: new ColorRGBA("#000000") },
+            { label: "Color 2", type: SocketType.color, conection: null,value: new ColorRGBA("#aa33cc") },
+        ];
         this._output = [];
+
+        this.setSocketsId();
     }
 
 }

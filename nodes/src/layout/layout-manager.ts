@@ -2,7 +2,10 @@ import { Canvas } from "../core/html-interface/canvas.js";
 import { Vector2 } from "../core/math/vector.js";
 import { BaseNode } from "../node/definitions.js";
 import { NodeEngine } from "../node/node-engine.js";
+import { SocketType } from "../node/types/socket-types.js";
 import { Camera } from "../render/camera.js";
+import { InputElement } from "./elements/base-input-element.js";
+import { ColorInputElement } from "./elements/color-input-element.js";
 import { NodeElement, SocketElement } from "./layout-elements.js";
 
 export class LayoutManager {
@@ -80,7 +83,7 @@ export class LayoutManager {
             let longestText = headerLabelMeasurement.width;
 
             for (const socket of node.input) {
-                let textSize = this.canvas.context.measureText(socket[0].label).width;
+                let textSize = this.canvas.context.measureText(socket.label).width;
                 if (textSize > longestText) longestText = textSize;
             }
             for (const socket of node.output) {
@@ -88,13 +91,14 @@ export class LayoutManager {
                 if (textSize > longestText) longestText = textSize;
             }
 
-            const boxWidth = longestText + 50 + 2 * this.activeCamera.nodeStyle.textMargin!;
+            const boxWidth = Math.max(longestText + 50 + 2 * this.activeCamera.nodeStyle.textMargin!, 120);
 
             var offset = layout.headerHeight + textHeight;
 
             for (const socket of node.output) {
                 let socketLayout: SocketElement = {
                     socket: socket,
+                    parent: layout,
                     id: socket.uId!,
                     position: node.position.sub(new Vector2(-this.activeCamera.convertPixelToUnit(boxWidth, true), this.activeCamera.convertPixelToUnit(offset, true))),
                     labelPosition: new Vector2(),
@@ -114,8 +118,9 @@ export class LayoutManager {
 
             for (const socket of node.input) {
                 let socketLayout: SocketElement = {
-                    socket: socket[0],
-                    id: socket[0].uId!,
+                    socket: socket,
+                    id: socket.uId!,
+                    parent: layout,
                     position: node.position.sub(new Vector2(0, this.activeCamera.convertPixelToUnit(offset, true))),
                     labelPosition: new Vector2(),
                     labelAlign: "left",
@@ -128,8 +133,17 @@ export class LayoutManager {
                 socketLayout.topLeft = socketLayout.position.add(new Vector2(-realRadius, realRadius));
                 socketLayout.size = new Vector2(2 * this.activeCamera.nodeStyle.socketRadius!, 2 * this.activeCamera.nodeStyle.socketRadius!);
 
-                layout.socketLayouts.set(socket[0].uId!, socketLayout);
-                offset += this.activeCamera.nodeStyle.textMargin! + textHeight;
+                layout.socketLayouts.set(socket.uId!, socketLayout);
+                
+                if (!socket.conection) {
+                    offset += this.activeCamera.nodeStyle.textMargin! + textHeight/2;
+                    let inputLayoutReturnVal = this.generateInputLayout(socketLayout, offset, textHeight);
+                    socketLayout.input = inputLayoutReturnVal[0];
+                    offset = inputLayoutReturnVal[1];
+                } else {
+                    offset += this.activeCamera.nodeStyle.textMargin! + textHeight;
+
+                }
             }
 
             let boxHeight = offset;
@@ -139,5 +153,24 @@ export class LayoutManager {
         }
     }
 
+    private generateInputLayout(element: SocketElement, offset: number, textHeight: number): [InputElement<any>, number] {
+        switch (element.socket.type) {
+            case SocketType.color:
+                let pos = element.parent.position.add(new Vector2(this.activeCamera!.convertPixelToUnit(this.activeCamera!.nodeStyle.textMargin! + this.activeCamera!.nodeStyle.socketRadius!, true), - this.activeCamera!.convertPixelToUnit(offset, true)));
+                let colorInput = new ColorInputElement(
+                    element,
+                    pos,
+                    new Vector2(30, 20),
+                    pos.add(new Vector2(this.activeCamera!.convertPixelToUnit(60, true), -this.activeCamera!.convertPixelToUnit(40, true))),
+                    (c) => {
+                        // TODO
+                    }
+                );
 
+                return [colorInput, offset + colorInput.size.y + textHeight];
+                break;
+            default:
+                throw Error(`Unkown socket type: ${element.socket.type} `)
+        }
+    }
 }

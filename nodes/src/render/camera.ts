@@ -7,6 +7,9 @@ import * as primitives from "./primitives.js"
 import { ColorRGB } from "../core/color/color.js";
 import { NodeElement } from "../layout/layout-elements.js";
 import { Context } from "../context/context-manager.js";
+import { InputElement } from "../layout/elements/base-input-element.js";
+import { SocketType } from "../node/types/socket-types.js";
+import { ColorInputElement } from "../layout/elements/color-input-element.js";
 
 
 
@@ -161,6 +164,9 @@ export class Camera {
             this.board.context.fillStyle = this.nodeStyle.fontColor!;
             let rasterSocketLabelPos = this.convertWorldCoordToRaster(socket[1].labelPosition);
             this.board.context.fillText(socket[1].socket.label, rasterSocketLabelPos.x, rasterSocketLabelPos.y);
+            if (socket[1].input) {
+                this.renderInput(socket[1].input, socket[1].socket.type);
+            }
         }
 
     }
@@ -171,6 +177,25 @@ export class Camera {
         for (const node of nodes) {
             let selected = (!!context && context.activeElement?.id == node.id);
             this.renderNode(node, selected);
+        }
+    }
+
+    renderInput(input: InputElement<any>, type: SocketType) {
+        switch (type) {
+            case SocketType.color: {
+
+                let colorInput = input as ColorInputElement;
+                this.board.context.fillStyle = colorInput.value.toHex();
+
+                let rasterPos = this.convertWorldCoordToRaster(colorInput.position);
+                let rasterDim = new Vector2(this.realPixelSize(colorInput.size.x), this.realPixelSize(colorInput.size.y));
+                this.board.context.fillRect(rasterPos.x, rasterPos.y, rasterDim.x, rasterDim.y);
+
+                this.board.context.strokeStyle = this.nodeStyle.borderStyle!;
+                this.board.context.lineWidth = this.nodeStyle.borderThickness!;
+                this.board.context.strokeRect(rasterPos.x, rasterPos.y, rasterDim.x, rasterDim.y);
+            }
+                break;
         }
     }
 
