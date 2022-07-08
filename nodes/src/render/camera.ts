@@ -1,15 +1,10 @@
 import { Canvas } from "../core/html-interface/canvas.js";
-import { InputEventType } from "../input/input-events.js";
 import { InputHandler } from "../input/input-handler.js";
-import { MouseInputType } from "../input/input-types.js";
 import { Vector2 } from "../core/math/vector.js";
-import { BaseNode } from "../node/node-defs/base-node.js";
-import { Socket } from "../node/types/socket.js";
 import { BgStyle, DefaultBgStyle } from "./styles/bg-style.js";
 import { DefaultNodeStyle, NodeStyle } from "./styles/node-style.js";
 import * as primitives from "./primitives.js"
 import { ColorRGB } from "../core/color/color.js";
-import { Selectable, SelectableType } from "../core/selectable/selectable.js";
 import { NodeElement } from "../layout/layout-elements.js";
 import { Context } from "../context/context-manager.js";
 
@@ -21,10 +16,6 @@ export class Camera {
     frustrumHeight: number;
     aspectRatio: number;
     zoom: number;
-
-    private inputHandler: InputHandler;
-    private moveCamera: boolean = false;
-    private mousePos!: Vector2;
 
     bg: Canvas;
     board: Canvas;
@@ -38,7 +29,6 @@ export class Camera {
 
 
     constructor(bg: Canvas, board: Canvas, position: Vector2 = new Vector2(0, 0), frustrumWidth: number = 10, zoom: number = 1, bgStyle: BgStyle = {}, nodeStyle: NodeStyle = {}) {
-        this.inputHandler = InputHandler.getInstance();
 
         this.position = position;
         this.frustrumWidth = frustrumWidth;
