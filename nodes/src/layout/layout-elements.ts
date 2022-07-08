@@ -6,11 +6,13 @@ abstract class LayoutElement {
     position: Vector2;
     size: Vector2;
     bottomRight: Vector2;
+    id: string;
 
-    constructor(position: Vector2, size: Vector2, bottomRight: Vector2) {
+    constructor(position: Vector2, size: Vector2, bottomRight: Vector2, id: string) {
         this.position = position;
         this.size = size;
         this.bottomRight = bottomRight;
+        this.id = id;
     }
 }
 
@@ -20,8 +22,8 @@ class SocketElement extends LayoutElement {
     labelPosition: Vector2;
     labelAlign: "left" | "right";
 
-    constructor(socket: Socket, position: Vector2, size: Vector2, topLeft: Vector2, bottomRight: Vector2, labelPosition: Vector2, labelAlign: "left" | "right") {
-        super(position, size, bottomRight);
+    constructor(socket: Socket, id: string, position: Vector2, size: Vector2, topLeft: Vector2, bottomRight: Vector2, labelPosition: Vector2, labelAlign: "left" | "right") {
+        super(position, size, bottomRight, id);
         this.socket = socket;
         this.topLeft = topLeft;
         this.labelPosition = labelPosition;
@@ -35,8 +37,8 @@ class NodeElement extends LayoutElement {
     labelPosition: Vector2;
     socketLayouts: Map<string, SocketElement>;
 
-    constructor(node: BaseNode, socketLayouts: Map<string, SocketElement>, position: Vector2, size: Vector2, bottomRight: Vector2, labelPosition: Vector2, headerHeight: number) {
-        super(position, size, bottomRight);
+    constructor(node: BaseNode, id: string, socketLayouts: Map<string, SocketElement>, position: Vector2, size: Vector2, bottomRight: Vector2, labelPosition: Vector2, headerHeight: number) {
+        super(position, size, bottomRight, id);
         this.node = node;
         this.labelPosition = labelPosition;
         this.headerHeight = headerHeight;

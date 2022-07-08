@@ -1,12 +1,15 @@
 import { Canvas } from "../core/html-interface/canvas.js";
 import { Vector2 } from "../core/math/vector.js";
 import { BaseNode } from "../node/node-defs/base-node.js";
+import { NodeEngine } from "../node/node-engine.js";
 import { Camera } from "../render/camera.js";
 import { NodeElement, SocketElement } from "./layout-elements.js";
 
 export class LayoutManager {
     private static instance: LayoutManager;
     private activeCamera: Camera | null = null;
+
+    private engine: NodeEngine;
 
     private canvas: Canvas;
 
@@ -15,7 +18,10 @@ export class LayoutManager {
     private constructor() {
         let canvasElement = document.createElement("canvas");
         let canvasContext = canvasElement.getContext("2d")!;
+
         this.canvas = { element: canvasElement, context: canvasContext };
+
+        this.engine = NodeEngine.getInstance();
     }
 
     public static getInstance(activeCamera?: Camera): LayoutManager {
@@ -40,8 +46,10 @@ export class LayoutManager {
         this.activeCamera = camera;
     }
 
-    generateLayout(nodes: BaseNode[]) {
+    generateLayout(nodes?: BaseNode[]) {
         this.nodeElements = []
+        if (!nodes)
+            nodes = this.engine.nodes;
         for (const node of nodes) {
 
 
@@ -51,6 +59,7 @@ export class LayoutManager {
 
             var layout: NodeElement = {
                 node: node,
+                id: node.uId,
                 position: node.position,
                 headerHeight: 0,
                 labelPosition: new Vector2(),
@@ -86,6 +95,7 @@ export class LayoutManager {
             for (const socket of node.output) {
                 let socketLayout: SocketElement = {
                     socket: socket,
+                    id: socket.uId!,
                     position: node.position.sub(new Vector2(-this.activeCamera.convertPixelToUnit(boxWidth, true), this.activeCamera.convertPixelToUnit(offset, true))),
                     labelPosition: new Vector2(),
                     labelAlign: "right",
@@ -105,6 +115,7 @@ export class LayoutManager {
             for (const socket of node.input) {
                 let socketLayout: SocketElement = {
                     socket: socket[0],
+                    id: socket[0].uId!,
                     position: node.position.sub(new Vector2(0, this.activeCamera.convertPixelToUnit(offset, true))),
                     labelPosition: new Vector2(),
                     labelAlign: "left",

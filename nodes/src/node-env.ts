@@ -49,7 +49,6 @@ export class NodeEnviroment {
             let transformedVec = this.camera.convertRasterCoordToWorld(vec);
 
             this.inputHandler.setState({ mousePosition: transformedVec, mouseRawPosition: vec });
-
             this.camera.render(this.layoutManager.getLayout().nodes, this.contextManager.context);
         });
 

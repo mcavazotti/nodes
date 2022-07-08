@@ -60,33 +60,6 @@ export class Camera {
             ...DefaultNodeStyle,
             ...nodeStyle
         }
-
-        this.inputHandler.addEventListener(InputEventType.mousedown, (e) => {
-            // console.log(e);
-            this.moveCamera = e.mouseButtonDown!.indexOf(MouseInputType.leftButton) != -1;
-            this.mousePos = e.mousePosition!;
-        });
-        this.inputHandler.addEventListener(InputEventType.mouseup, (e) => {
-            // console.log(e);
-            this.moveCamera = e.mouseButtonDown!.indexOf(MouseInputType.leftButton) != -1;
-        });
-        this.inputHandler.addEventListener(InputEventType.mousemove, (e) => {
-            if (this.moveCamera) {
-                this.position = this.position.sub(e.mousePosition!.sub(this.mousePos));
-                // console.log(e.mouseMovement);
-                // console.log(this.position);
-            }
-        })
-        this.inputHandler.addEventListener(InputEventType.mousewheel, (e) => {
-            switch (e.mouseScroll!) {
-                case MouseInputType.scrollUp:
-                    this.zoom = this.zoom == 1 ? 1 : this.zoom - 1;
-                    break;
-                case MouseInputType.scrollDown:
-                    this.zoom = this.zoom == 20 ? 20 : this.zoom + 1;
-                    break;
-            }
-        });
     }
 
     convertWorldCoordToRaster(vec: Vector2): Vector2 {
@@ -186,14 +159,14 @@ export class Camera {
         this.board.context.font = `${this.realPixelSize(this.nodeStyle.fontSize!)}px ${this.nodeStyle.fontFace!}`;
         for (const socket of nodeLayout.socketLayouts) {
             let color = new ColorRGB(this.nodeStyle.socketColors!.get(socket[1].socket.type)!);
-            
+
             this.board.context.fillStyle = color.toHex();
             primitives.circle(this.board.context, this.convertWorldCoordToRaster(socket[1].position), realSocketRadius);
             this.board.context.fill();
             this.board.context.strokeStyle = color.scale(0.6).toHex();
             this.board.context.lineWidth = this.nodeStyle.borderThickness!;
             this.board.context.stroke();
-            
+
             this.board.context.textAlign = socket[1].labelAlign;
             this.board.context.fillStyle = this.nodeStyle.fontColor!;
             let rasterSocketLabelPos = this.convertWorldCoordToRaster(socket[1].labelPosition);
@@ -206,7 +179,7 @@ export class Camera {
         // var socketPositions: Map<string, [Socket, Vector2]> = new Map();
 
         for (const node of nodes) {
-            let selected: boolean = (!!context && context.activeElement == node);
+            let selected = (!!context && context.activeElement?.id == node.id);
             this.renderNode(node, selected);
         }
     }
@@ -216,16 +189,16 @@ export class Camera {
         for (const node of nodes) {
             let rasterPos = this.convertWorldCoordToRaster(node.position);
             let rasterDim = new Vector2(this.realPixelSize(node.size.x), this.realPixelSize(node.size.y))
-            this.board.context.fillRect(rasterPos.x, rasterPos.y, rasterDim.x, rasterDim.y);   
+            this.board.context.fillRect(rasterPos.x, rasterPos.y, rasterDim.x, rasterDim.y);
         }
-        
+
         this.board.context.fillStyle = "#ffc745aa";
         for (const node of nodes) {
             for (const socket of node.socketLayouts) {
                 let rasterPos = this.convertWorldCoordToRaster(socket[1].topLeft);
-                
+
                 let rasterDim = new Vector2(this.realPixelSize(socket[1].size.x), this.realPixelSize(socket[1].size.y))
-                this.board.context.fillRect(rasterPos.x, rasterPos.y, rasterDim.x, rasterDim.y);   
+                this.board.context.fillRect(rasterPos.x, rasterPos.y, rasterDim.x, rasterDim.y);
             }
         }
     }

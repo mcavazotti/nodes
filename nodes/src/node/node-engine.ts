@@ -7,7 +7,7 @@ export class NodeEngine{
     static instance: NodeEngine;
     private _nodes: BaseNode[];
     get nodes(): BaseNode[] {
-        return this._nodes;
+        return [...this._nodes];
     } 
 
     private constructor() {
