@@ -4,6 +4,7 @@ import { Vector2 } from '../core/math/vector';
 import { InputEventType } from '../input/input-events';
 import { InputHandler } from '../input/input-handler';
 import { MouseInputType } from '../input/input-types';
+import { LayoutElementTypes } from '../layout/elements/element-types';
 import { NodeElement } from '../layout/layout-elements';
 import { LayoutManager } from '../layout/layout-manager';
 import { Camera } from '../render/camera'
@@ -23,9 +24,11 @@ export class UiHandler {
         this.layoutManager = LayoutManager.getInstance();
 
         this.input.addEventListener(InputEventType.mousedown, (e, c) => {
-            console.log("down")
             if (e.mouseButtonDown!.includes(MouseInputType.leftButton)) {
                 this.context.setActive();
+                if (this.context.context.activeElement != null && (this.context.context.activeElement!.type == LayoutElementTypes.node)) {
+                    this.layoutManager.moveNodeToFront(this.context.context.activeElement as NodeElement);
+                }
                 this.mousePosition = e.mousePosition!;
             }
         });

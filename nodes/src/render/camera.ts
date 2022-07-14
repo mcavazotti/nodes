@@ -133,6 +133,7 @@ export class Camera {
         this.board.context.font = `bold ${this.realPixelSize(this.nodeStyle.fontSize!)}px ${this.nodeStyle.fontFace!}`;
         this.board.context.textBaseline = "middle";
         this.board.context.fillStyle = this.nodeStyle.fontColor!;
+        this.board.context.textAlign = "left";
         let rasterLabelPos = this.convertWorldCoordToRaster(nodeLayout.labelPosition);
         this.board.context.fillText(nodeLayout.node.label, rasterLabelPos.x, rasterLabelPos.y);
 
@@ -218,14 +219,12 @@ export class Camera {
     }
 
     render(nodes?: NodeElement[], context?: Context) {
-        // console.log(nodes?.length)
-        // console.log(this.canvasDimention.y / this.frustrumHeight * this.zoom)
 
         this.renderBackground();
         this.board.context.fillStyle = "#00000000";
         this.board.context.clearRect(0, 0, this.board.element.width, this.board.element.height);
-
-
+        
+        
         if (nodes) {
             this.renderNodes(nodes, context);
             // this.renderLayout(nodes);

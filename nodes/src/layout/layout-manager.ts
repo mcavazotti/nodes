@@ -1,11 +1,12 @@
 import { Canvas } from "../core/html-interface/canvas";
 import { Vector2 } from "../core/math/vector";
-import { BaseNode } from "../node/definitions";
+import { BaseNode, OutputNode } from "../node/definitions";
 import { NodeEngine } from "../node/node-engine";
 import { SocketType } from "../node/types/socket-types";
 import { Camera } from "../render/camera";
 import { InputElement } from "./elements/base-input-element";
 import { ColorInputElement } from "./elements/color-input-element";
+import { LayoutElementTypes } from "./elements/element-types";
 import { NodeElement, SocketElement } from "./layout-elements";
 
 export class LayoutManager {
@@ -41,15 +42,25 @@ export class LayoutManager {
         // console.log(this.nodeElements.length)
         return {
             nodes: [...this.nodeElements],
+            sockets: this.nodeElements.map((n) => Array.from(n.socketLayouts.values())).reduce((acc, val) => acc.concat(val), []),
             ui: [],
         };
     }
 
+    moveNodeToFront(node:NodeElement, idx?:number) {
+        if(idx === undefined) {
+            idx = this.nodeElements.indexOf(node);
+        }
+        this.nodeElements.splice(idx, 1);
+        this.nodeElements.push(node);
+        this.engine.moveNodeToFront(node.node);
+    }
     setActiveCamera(camera: Camera) {
         this.activeCamera = camera;
     }
 
     generateLayout(nodes?: BaseNode[]) {
+        console.log("generateLayout")
         this.nodeElements = []
         if (!nodes)
             nodes = this.engine.nodes;
@@ -68,7 +79,8 @@ export class LayoutManager {
                 labelPosition: new Vector2(),
                 size: new Vector2(),
                 bottomRight: new Vector2(),
-                socketLayouts: new Map<string, SocketElement>()
+                socketLayouts: new Map<string, SocketElement>(),
+                type: LayoutElementTypes.node
             };
 
             this.canvas.context.font = `${this.activeCamera.nodeStyle.fontSize! + 2}px ${this.activeCamera.nodeStyle.fontFace!}`;
@@ -105,7 +117,8 @@ export class LayoutManager {
                     labelAlign: "right",
                     topLeft: new Vector2(),
                     bottomRight: new Vector2(),
-                    size: new Vector2()
+                    size: new Vector2(),
+                    type: LayoutElementTypes.socket
                 };
                 socketLayout.labelPosition = socketLayout.position.sub(new Vector2(this.activeCamera.convertPixelToUnit(this.activeCamera.nodeStyle.textMargin! + this.activeCamera.nodeStyle.socketRadius!, true), 0));
                 let realRadius = this.activeCamera.convertPixelToUnit(this.activeCamera.nodeStyle.socketRadius!, true);
@@ -127,6 +140,7 @@ export class LayoutManager {
                     topLeft: new Vector2(),
                     bottomRight: new Vector2(),
                     size: new Vector2(),
+                    type: LayoutElementTypes.socket
                 };
                 socketLayout.labelPosition = socketLayout.position.add(new Vector2(this.activeCamera.convertPixelToUnit(this.activeCamera.nodeStyle.textMargin! + this.activeCamera.nodeStyle.socketRadius!, true), 0));
                 let realRadius = this.activeCamera.convertPixelToUnit(this.activeCamera.nodeStyle.socketRadius!, true);
@@ -134,9 +148,9 @@ export class LayoutManager {
                 socketLayout.size = new Vector2(2 * this.activeCamera.nodeStyle.socketRadius!, 2 * this.activeCamera.nodeStyle.socketRadius!);
 
                 layout.socketLayouts.set(socket.uId!, socketLayout);
-                
+
                 if (!socket.conection) {
-                    offset += this.activeCamera.nodeStyle.textMargin! + textHeight/2;
+                    offset += this.activeCamera.nodeStyle.textMargin! + textHeight / 2;
                     let inputLayoutReturnVal = this.generateInputLayout(socketLayout, offset, textHeight);
                     socketLayout.input = inputLayoutReturnVal[0];
                     offset = inputLayoutReturnVal[1];
