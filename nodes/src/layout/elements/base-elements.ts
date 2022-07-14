@@ -1,4 +1,4 @@
-import { Vector2 } from "../../core/math/vector.js";
+import { Vector2 } from "../../core/math/vector";
 
 export abstract class LayoutElement {
     position: Vector2;

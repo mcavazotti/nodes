@@ -1,2 +1,2 @@
-export { BaseNode } from "./node-defs/base-node.js";
-export { OutputNode } from "./node-defs/output-node.js";
+export { BaseNode } from "./node-defs/base-node";
+export { OutputNode } from "./node-defs/output-node";

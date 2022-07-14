@@ -1,2 +1,5 @@
 script/**/*.js
 script/**/*.js.map
+node_modules
+dist
+.parcel-cache

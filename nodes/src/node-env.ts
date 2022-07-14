@@ -1,12 +1,12 @@
-import { Camera } from "./render/camera.js";
-import { Canvas } from "./core/html-interface/canvas.js";
-import { Vector2 } from "./core/math/vector.js";
-import { InputHandler } from "./input/input-handler.js";
-import { MouseInputType } from "./input/input-types.js";
-import { NodeEngine } from "./node/node-engine.js";
-import { LayoutManager } from "./layout/layout-manager.js";
-import { UiHandler } from "./ui/ui-handler.js";
-import { ContextManager } from "./context/context-manager.js";
+import { Camera } from "./render/camera";
+import { Canvas } from "./core/html-interface/canvas";
+import { Vector2 } from "./core/math/vector";
+import { InputHandler } from "./input/input-handler";
+import { MouseInputType } from "./input/input-types";
+import { NodeEngine } from "./node/node-engine";
+import { LayoutManager } from "./layout/layout-manager";
+import { UiHandler } from "./ui/ui-handler";
+import { ContextManager } from "./context/context-manager";
 
 export class NodeEnviroment {
     private bg: Canvas;

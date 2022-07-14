@@ -1,6 +1,6 @@
-import { Vector2 } from "../../core/math/vector.js";
-import { NodeClass } from "../types/node-classes.js";
-import { Socket } from "../types/socket.js";
+import { Vector2 } from "../../core/math/vector";
+import { NodeClass } from "../types/node-classes";
+import { Socket } from "../types/socket";
 
 export abstract class BaseNode {
     protected _label!: string;

@@ -1,4 +1,4 @@
-import { Vector2 } from "../core/math/vector.js";
+import { Vector2 } from "../core/math/vector";
 
 function circle(context: CanvasRenderingContext2D, position: Vector2, radius: number) {
     context.beginPath();

@@ -1,8 +1,8 @@
-import { Vector2 } from "../core/math/vector.js";
-import { ContextType } from "../context/context-types.js";
-import { InputEventType } from "./input-events.js";
-import { InputState } from "./input-state.js";
-import { Context, ContextManager } from "../context/context-manager.js";
+import { Vector2 } from "../core/math/vector";
+import { ContextType } from "../context/context-types";
+import { InputEventType } from "./input-events";
+import { InputState } from "./input-state";
+import { Context, ContextManager } from "../context/context-manager";
 
 export class InputHandler {
     private static instance: InputHandler;

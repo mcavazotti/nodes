@@ -1,7 +1,7 @@
-import { Vector2 } from "../../core/math/vector.js";
-import { Socket } from "../../node/types/socket.js";
-import { LayoutElement } from "./base-elements.js";
-import { SocketElement } from "./socket-element.js";
+import { Vector2 } from "../../core/math/vector";
+import { Socket } from "../../node/types/socket";
+import { LayoutElement } from "./base-elements";
+import { SocketElement } from "./socket-element";
 
 export abstract class InputElement<T> extends LayoutElement {
     private _value: T;

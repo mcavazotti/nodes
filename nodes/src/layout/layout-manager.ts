@@ -1,12 +1,12 @@
-import { Canvas } from "../core/html-interface/canvas.js";
-import { Vector2 } from "../core/math/vector.js";
-import { BaseNode } from "../node/definitions.js";
-import { NodeEngine } from "../node/node-engine.js";
-import { SocketType } from "../node/types/socket-types.js";
-import { Camera } from "../render/camera.js";
-import { InputElement } from "./elements/base-input-element.js";
-import { ColorInputElement } from "./elements/color-input-element.js";
-import { NodeElement, SocketElement } from "./layout-elements.js";
+import { Canvas } from "../core/html-interface/canvas";
+import { Vector2 } from "../core/math/vector";
+import { BaseNode } from "../node/definitions";
+import { NodeEngine } from "../node/node-engine";
+import { SocketType } from "../node/types/socket-types";
+import { Camera } from "../render/camera";
+import { InputElement } from "./elements/base-input-element";
+import { ColorInputElement } from "./elements/color-input-element";
+import { NodeElement, SocketElement } from "./layout-elements";
 
 export class LayoutManager {
     private static instance: LayoutManager;

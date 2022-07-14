@@ -1,4 +1,4 @@
-import { SocketType } from "./socket-types.js";
+import { SocketType } from "./socket-types";
 
 export interface Socket<T> {
     label: string;

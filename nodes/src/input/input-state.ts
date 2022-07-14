@@ -1,5 +1,5 @@
-import { Vector2 } from "../core/math/vector.js";
-import { MouseInputType } from "./input-types.js";
+import { Vector2 } from "../core/math/vector";
+import { MouseInputType } from "./input-types";
 
 export interface InputState {
     mousePosition?: Vector2;

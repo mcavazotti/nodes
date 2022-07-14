@@ -1,7 +1,7 @@
-import { Vector2 } from "../core/math/vector.js";
-import { LayoutElement } from "../layout/layout-elements.js";
-import { LayoutManager } from "../layout/layout-manager.js";
-import { ContextType } from "./context-types.js";
+import { Vector2 } from "../core/math/vector";
+import { LayoutElement } from "../layout/layout-elements";
+import { LayoutManager } from "../layout/layout-manager";
+import { ContextType } from "./context-types";
 
 interface Context {
     hover: ContextType;

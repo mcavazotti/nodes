@@ -1,4 +1,4 @@
-import { Vector3, Vector4 } from "../math/vector.js";
+import { Vector3, Vector4 } from "../math/vector";
 
 class ColorRGB extends Vector3 {
     constructor(r: number, g: number, b: number);

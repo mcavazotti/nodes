@@ -1,4 +1,4 @@
-import { NodeEnviroment } from "./node-env.js";
+import { NodeEnviroment } from "./node-env";
 
 export function main() {
     const background = document.getElementById("canvas-bg") as HTMLCanvasElement;

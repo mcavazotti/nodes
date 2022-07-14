@@ -1,8 +1,8 @@
-import { ColorRGBA } from "../../core/color/color.js";
-import { Vector2 } from "../../core/math/vector.js";
-import { NodeClass } from "../types/node-classes.js";
-import { SocketType } from "../types/socket-types.js";
-import { BaseNode } from "./base-node.js";
+import { ColorRGBA } from "../../core/color/color";
+import { Vector2 } from "../../core/math/vector";
+import { NodeClass } from "../types/node-classes";
+import { SocketType } from "../types/socket-types";
+import { BaseNode } from "./base-node";
 
 export class OutputNode extends BaseNode {
 

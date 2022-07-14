@@ -1,18 +1,24 @@
 <html>
-    <head>
-        <title>Nodes</title>
-        <script type="module">
-            import {main} from "./script/main.js"
-            main();
-        </script>
-        <link rel="stylesheet" href="style.css">
-    </head>
-    <body>
-        <div id="div-canvas">
-            <canvas id="canvas-bg" width="800" height="600"></canvas>
-            <canvas id="canvas-board" width="800" height="600"></canvas>
-            <canvas id="canvas-ui" width="800" height="600"></canvas>
-            <canvas id="canvas-input" width="800" height="600"></canvas>
-        </div>
-    </body>
+
+<head>
+    <title>Nodes</title>
+    <script type="module">
+        import { main } from "./script/main.js"
+        window.onload = () => {
+            console.log("aqui");
+            main()
+        };
+    </script>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div id="div-canvas">
+        <canvas id="canvas-bg" width="800" height="600"></canvas>
+        <canvas id="canvas-board" width="800" height="600"></canvas>
+        <canvas id="canvas-ui" width="800" height="600"></canvas>
+        <canvas id="canvas-input" width="800" height="600"></canvas>
+    </div>
+</body>
+
 </html>

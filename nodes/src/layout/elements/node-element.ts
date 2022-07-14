@@ -1,6 +1,6 @@
-import { Vector2 } from "../../core/math/vector.js";
+import { Vector2 } from "../../core/math/vector";
 import { BaseNode } from "../../node/definitions";
-import { LayoutElement, SocketElement } from "../layout-elements.js";
+import { LayoutElement, SocketElement } from "../layout-elements";
 
 export class NodeElement extends LayoutElement {
     node: BaseNode;

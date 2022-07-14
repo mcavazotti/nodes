@@ -1,5 +1,5 @@
-import { NodeClass } from "../../node/types/node-classes.js";
-import { SocketType } from "../../node/types/socket-types.js";
+import { NodeClass } from "../../node/types/node-classes";
+import { SocketType } from "../../node/types/socket-types";
 
 interface NodeStyle {
     bgColor?: string;

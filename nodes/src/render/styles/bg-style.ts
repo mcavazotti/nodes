@@ -1,4 +1,4 @@
-import { Vector2 } from "../../core/math/vector.js";
+import { Vector2 } from "../../core/math/vector";
 
 interface BgStyle {
     bgColor?: string,

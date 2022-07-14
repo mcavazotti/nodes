@@ -1,15 +1,14 @@
-import { Canvas } from "../core/html-interface/canvas.js";
-import { InputHandler } from "../input/input-handler.js";
-import { Vector2 } from "../core/math/vector.js";
-import { BgStyle, DefaultBgStyle } from "./styles/bg-style.js";
-import { DefaultNodeStyle, NodeStyle } from "./styles/node-style.js";
-import * as primitives from "./primitives.js"
-import { ColorRGB } from "../core/color/color.js";
-import { NodeElement } from "../layout/layout-elements.js";
-import { Context } from "../context/context-manager.js";
-import { InputElement } from "../layout/elements/base-input-element.js";
-import { SocketType } from "../node/types/socket-types.js";
-import { ColorInputElement } from "../layout/elements/color-input-element.js";
+import { Canvas } from "../core/html-interface/canvas";
+import { Vector2 } from "../core/math/vector";
+import { BgStyle, DefaultBgStyle } from "./styles/bg-style";
+import { DefaultNodeStyle, NodeStyle } from "./styles/node-style";
+import * as primitives from "./primitives"
+import { ColorRGB } from "../core/color/color";
+import { NodeElement } from "../layout/layout-elements";
+import { Context } from "../context/context-manager";
+import { InputElement } from "../layout/elements/base-input-element";
+import { SocketType } from "../node/types/socket-types";
+import { ColorInputElement } from "../layout/elements/color-input-element";
 
 
 

@@ -1,12 +1,12 @@
-import { ContextManager } from '../context/context-manager.js';
-import { ContextType } from '../context/context-types.js';
-import { Vector2 } from '../core/math/vector.js';
-import { InputEventType } from '../input/input-events.js';
-import { InputHandler } from '../input/input-handler.js';
-import { MouseInputType } from '../input/input-types.js';
-import { NodeElement } from '../layout/layout-elements.js';
-import { LayoutManager } from '../layout/layout-manager.js';
-import { Camera } from '../render/camera.js'
+import { ContextManager } from '../context/context-manager';
+import { ContextType } from '../context/context-types';
+import { Vector2 } from '../core/math/vector';
+import { InputEventType } from '../input/input-events';
+import { InputHandler } from '../input/input-handler';
+import { MouseInputType } from '../input/input-types';
+import { NodeElement } from '../layout/layout-elements';
+import { LayoutManager } from '../layout/layout-manager';
+import { Camera } from '../render/camera'
 
 export class UiHandler {
     private static instance: UiHandler;
