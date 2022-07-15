@@ -37,7 +37,7 @@ export class NodeEnviroment {
     }
     start() {
         this.layoutManager.generateLayout(this.engine.nodes);
-        this.camera.render(this.layoutManager.getLayout().nodes,this.contextManager.context );
+        this.camera.render(this.layoutManager.getLayout(),this.contextManager.context );
 
         this.input.element.addEventListener("contextmenu", (event) => {
             event.preventDefault();
@@ -49,7 +49,7 @@ export class NodeEnviroment {
             let transformedVec = this.camera.convertRasterCoordToWorld(vec);
 
             this.inputHandler.setState({ mousePosition: transformedVec, mouseRawPosition: vec });
-            this.camera.render(this.layoutManager.getLayout().nodes, this.contextManager.context);
+            this.camera.render(this.layoutManager.getLayout(), this.contextManager.context);
         });
 
         this.input.element.addEventListener("mousedown", (event) => {
@@ -72,7 +72,7 @@ export class NodeEnviroment {
             }
             if (mouseButton != null){
                 this.inputHandler.setState({ mouseButtonDown: [mouseButton] })
-                this.camera.render(this.layoutManager.getLayout().nodes, this.contextManager.context);   
+                this.camera.render(this.layoutManager.getLayout(), this.contextManager.context);   
             }
         });
 
@@ -102,7 +102,7 @@ export class NodeEnviroment {
             let wheelDirection = event.deltaY < 0 ? MouseInputType.scrollUp: MouseInputType.scrollDown;
             this.inputHandler.setState({mouseScroll: wheelDirection});
 
-            this.camera.render(this.layoutManager.getLayout().nodes, this.contextManager.context);
+            this.camera.render(this.layoutManager.getLayout(), this.contextManager.context);
 
         });
     }

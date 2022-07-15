@@ -8,6 +8,7 @@ interface Context {
     hoverElement: LayoutElement | null;
     active: ContextType;
     activeElement: LayoutElement | null;
+    pointerPosition: Vector2;
 }
 
 class ContextManager {
@@ -16,7 +17,8 @@ class ContextManager {
         hover: ContextType.any,
         active: ContextType.any,
         activeElement: null,
-        hoverElement: null
+        hoverElement: null,
+        pointerPosition: new Vector2()
     }
     get context(): Context {
         return { ...this._context };
@@ -35,24 +37,31 @@ class ContextManager {
     }
 
     updateContext(worldPointerPos: Vector2, rasterPointerPos: Vector2) {
+        console.log("updateContext")
         let layout = LayoutManager.getInstance().getLayout();
-        if (layout.ui) {
-            // TODO: something here 
-        }
-        if(layout.sockets) {
-            for(const socket of layout.sockets) {
-                if(this.isInside(worldPointerPos,socket.topLeft,socket.bottomRight)) {
-                    this._context.hover = ContextType.socket;
-                    this._context.hoverElement = socket;
-                    return;
-                }
-            }
-        }
+        this._context.pointerPosition = worldPointerPos; 
+
+        // if (layout.ui) {
+        //     // TODO: something here 
+        // }
 
         if (layout.nodes) {
-            for (let i = layout.nodes.length-1; i >=0; i--) {
+            for (let i = layout.nodes.length - 1; i >= 0; i--) {
                 const node = layout.nodes[i];
+                
+
+                for (const socket of node.socketLayouts.values()) {
+                    if (this.isInside(worldPointerPos, socket.topLeft, socket.bottomRight)) {
+                        // console.log("on Socket")
+                        // console.log(worldPointerPos)
+                        this._context.hover = ContextType.socket;
+                        this._context.hoverElement = socket;
+                        return;
+                    }
+                }
                 if (this.isInside(worldPointerPos, node.position, node.bottomRight)) {
+                    // console.log("on Node")
+                    // console.log(worldPointerPos)
                     this._context.hover = ContextType.node;
                     this._context.hoverElement = node;
                     return;

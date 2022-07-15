@@ -9,6 +9,7 @@ import { Context } from "../context/context-manager";
 import { InputElement } from "../layout/elements/base-input-element";
 import { SocketType } from "../node/types/socket-types";
 import { ColorInputElement } from "../layout/elements/color-input-element";
+import { LayoutData } from "../layout/layout-manager";
 
 
 
@@ -154,10 +155,10 @@ export class Camera {
             let color = new ColorRGB(this.nodeStyle.socketColors!.get(socket[1].socket.type)!);
 
             this.board.context.fillStyle = color.toHex();
-            primitives.circle(this.board.context, this.convertWorldCoordToRaster(socket[1].position), realSocketRadius);
-            this.board.context.fill();
             this.board.context.strokeStyle = color.scale(0.6).toHex();
             this.board.context.lineWidth = this.nodeStyle.borderThickness!;
+            primitives.circle(this.board.context, this.convertWorldCoordToRaster(socket[1].position), realSocketRadius);
+            this.board.context.fill();
             this.board.context.stroke();
 
             this.board.context.textAlign = socket[1].labelAlign;
@@ -177,6 +178,21 @@ export class Camera {
         for (const node of nodes) {
             let selected = (!!context && context.activeElement?.id == node.id);
             this.renderNode(node, selected);
+        }
+    }
+    renderConnections(connections: [Vector2, Vector2][]) {
+        for (const connection of connections) {
+            this.board.context.strokeStyle = this.nodeStyle.connectionColor!;
+            this.board.context.lineWidth = this.nodeStyle.connectionThickness!;
+
+            let controlPoints: [Vector2, Vector2, Vector2, Vector2] = [
+                this.convertWorldCoordToRaster(connection[0]),
+                this.convertWorldCoordToRaster(connection[0].add(new Vector2(this.nodeStyle.connectionControlPointOffset!, 0))),
+                this.convertWorldCoordToRaster(connection[1].add(new Vector2(-this.nodeStyle.connectionControlPointOffset!, 0))),
+                this.convertWorldCoordToRaster(connection[1]),
+            ];
+            primitives.cubicBelzier(this.board.context, controlPoints);
+            this.board.context.stroke();
         }
     }
 
@@ -203,7 +219,8 @@ export class Camera {
         this.board.context.fillStyle = "#45bbffaa";
         for (const node of nodes) {
             let rasterPos = this.convertWorldCoordToRaster(node.position);
-            let rasterDim = new Vector2(this.realPixelSize(node.size.x), this.realPixelSize(node.size.y))
+            let tmp = node.bottomRight.sub(node.position);
+            let rasterDim = new Vector2(this.convertUnitToPixel(Math.abs(tmp.x)), this.convertUnitToPixel(Math.abs(tmp.y)))
             this.board.context.fillRect(rasterPos.x, rasterPos.y, rasterDim.x, rasterDim.y);
         }
 
@@ -211,23 +228,31 @@ export class Camera {
         for (const node of nodes) {
             for (const socket of node.socketLayouts) {
                 let rasterPos = this.convertWorldCoordToRaster(socket[1].topLeft);
-
-                let rasterDim = new Vector2(this.realPixelSize(socket[1].size.x), this.realPixelSize(socket[1].size.y))
+                let tmp = socket[1].bottomRight.sub(socket[1].topLeft);
+                let rasterDim = new Vector2(this.convertUnitToPixel(Math.abs(tmp.x)), this.convertUnitToPixel(Math.abs(tmp.y)))
                 this.board.context.fillRect(rasterPos.x, rasterPos.y, rasterDim.x, rasterDim.y);
             }
         }
     }
 
-    render(nodes?: NodeElement[], context?: Context) {
+    render(layout: LayoutData, context?: Context) {
 
         this.renderBackground();
         this.board.context.fillStyle = "#00000000";
         this.board.context.clearRect(0, 0, this.board.element.width, this.board.element.height);
-        
-        
-        if (nodes) {
-            this.renderNodes(nodes, context);
-            // this.renderLayout(nodes);
+
+        if(layout.connections) {
+            this.renderConnections(layout.connections);
+        }
+        if (layout.nodes) {
+            this.renderNodes(layout.nodes, context);
+            // this.renderLayout(layout.nodes);
+        }
+        if(layout.newConnection && context) {
+            console.log(layout.newConnection)
+            console.log([layout.newConnection[0] ?? context.pointerPosition, layout.newConnection[1] ?? context.pointerPosition])
+            console.log(context.pointerPosition)
+            this.renderConnections([[layout.newConnection[0] ?? context.pointerPosition, layout.newConnection[1] ?? context.pointerPosition]])
         }
 
     }

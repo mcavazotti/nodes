@@ -12,6 +12,9 @@ interface NodeStyle {
     headerColors?: Map<NodeClass, string>;
     socketColors?: Map<SocketType, string>;
     socketRadius?: number;
+    connectionColor?: string;
+    connectionThickness?: number;
+    connectionControlPointOffset?:number;
 }
 
 const DefaultNodeStyle: NodeStyle = {
@@ -22,9 +25,12 @@ const DefaultNodeStyle: NodeStyle = {
     fontColor: "white",
     textMargin: 3,
     borderThickness: 1,
-    headerColors: new Map([[NodeClass.output, "tomato"]]),
-    socketColors: new Map([[SocketType.color, "cyan"],[SocketType.vector3,"teal"]]),
+    headerColors: new Map([[NodeClass.output, "tomato"], [NodeClass.input,"blueviolet" ]]),
+    socketColors: new Map([[SocketType.color, "cyan"],[SocketType.vector2,"red"]]),
     socketRadius: 5,
+    connectionColor: "#ffffff",
+    connectionThickness: 3,
+    connectionControlPointOffset: 0.7,
 }
 
 export { NodeStyle, DefaultNodeStyle }

@@ -27,12 +27,12 @@ export abstract class BaseNode {
     protected setSocketsId() {
         let id = 0;
         for (const socket of this._input) {
-            socket.uId = `n-${this.uId.toString().padStart(4, '0')}-i-${id.toString().padStart(4, '0') }`;
+            socket.uId = `${this.uId.toString().padStart(4, '0')}-i-${id.toString().padStart(4, '0') }`;
             id++;
         }
         
         for (const socket of this._output) {
-            socket.uId = `n-${this.uId.toString().padStart(4, '0')}-o-${id.toString().padStart(4, '0') }`;
+            socket.uId = `${this.uId.toString().padStart(4, '0')}-o-${id.toString().padStart(4, '0') }`;
             id++;
         }
     }

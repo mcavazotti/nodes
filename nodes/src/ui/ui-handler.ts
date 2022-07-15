@@ -5,8 +5,10 @@ import { InputEventType } from '../input/input-events';
 import { InputHandler } from '../input/input-handler';
 import { MouseInputType } from '../input/input-types';
 import { LayoutElementTypes } from '../layout/elements/element-types';
-import { NodeElement } from '../layout/layout-elements';
+import { NodeElement, SocketElement } from '../layout/layout-elements';
 import { LayoutManager } from '../layout/layout-manager';
+import { NodeEngine } from '../node/node-engine';
+import { Socket } from '../node/types/socket';
 import { Camera } from '../render/camera'
 
 export class UiHandler {
@@ -17,6 +19,7 @@ export class UiHandler {
     private context: ContextManager;
     private layoutManager: LayoutManager;
     private mousePosition!: Vector2
+    private connectSocket: Socket<any> | null = null;
 
     private constructor() {
         this.input = InputHandler.getInstance();
@@ -26,14 +29,32 @@ export class UiHandler {
         this.input.addEventListener(InputEventType.mousedown, (e, c) => {
             if (e.mouseButtonDown!.includes(MouseInputType.leftButton)) {
                 this.context.setActive();
-                if (this.context.context.activeElement != null && (this.context.context.activeElement!.type == LayoutElementTypes.node)) {
+                if (this.context.context.active == ContextType.node) {
                     this.layoutManager.moveNodeToFront(this.context.context.activeElement as NodeElement);
+                }
+                if (this.context.context.active == ContextType.socket) {
+                    this.connectSocket = (this.context.context.activeElement as SocketElement).socket;
+                    this.layoutManager.generateLayout(undefined, this.context.context.activeElement!.id);
                 }
                 this.mousePosition = e.mousePosition!;
             }
         });
 
+        this.input.addEventListener(InputEventType.mouseup, (e, c) => {
+
+            if (this.connectSocket) {
+                if(c.hover == ContextType.socket){
+                    NodeEngine.getInstance().createConnection(this.connectSocket,(c.hoverElement as SocketElement).socket);
+                }
+                this.connectSocket = null;
+                this.layoutManager.generateLayout();
+            }
+
+
+        });
+
         this.input.addEventListener(InputEventType.mousemove, (e, c) => {
+            // console.log(c);
             if (e.mouseButtonDown!.includes(MouseInputType.leftButton)) {
                 if (this.camera && !c.activeElement) {
                     this.camera.position = this.camera.position.sub(e.mousePosition!.sub(this.mousePosition));
@@ -44,6 +65,7 @@ export class UiHandler {
                     this.layoutManager.generateLayout();
                 }
             }
+
 
         });
 

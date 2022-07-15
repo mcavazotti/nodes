@@ -8,7 +8,7 @@ export class CoordinateNode extends BaseNode {
 
     constructor(pos: Vector2) {
         super(pos);
-        this._type = NodeClass.output;
+        this._type = NodeClass.input;
         this._label = "Coordinates"
         this._input = [];
         this._output = [{

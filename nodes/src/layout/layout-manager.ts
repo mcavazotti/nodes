@@ -1,6 +1,6 @@
 import { Canvas } from "../core/html-interface/canvas";
 import { Vector2 } from "../core/math/vector";
-import { BaseNode, OutputNode } from "../node/definitions";
+import { BaseNode } from "../node/definitions";
 import { NodeEngine } from "../node/node-engine";
 import { SocketType } from "../node/types/socket-types";
 import { Camera } from "../render/camera";
@@ -9,7 +9,13 @@ import { ColorInputElement } from "./elements/color-input-element";
 import { LayoutElementTypes } from "./elements/element-types";
 import { NodeElement, SocketElement } from "./layout-elements";
 
-export class LayoutManager {
+interface LayoutData {
+    nodes: NodeElement[];
+    connections: [Vector2, Vector2][];
+    newConnection: [Vector2 | null, Vector2 | null] | null;
+}
+
+class LayoutManager {
     private static instance: LayoutManager;
     private activeCamera: Camera | null = null;
 
@@ -18,6 +24,8 @@ export class LayoutManager {
     private canvas: Canvas;
 
     private nodeElements: NodeElement[] = [];
+    private connections: [Vector2, Vector2][] = [];
+    private newConnection: [Vector2 | null, Vector2 | null] | null = null;
 
     private constructor() {
         let canvasElement = document.createElement("canvas");
@@ -38,17 +46,20 @@ export class LayoutManager {
         return LayoutManager.instance;
     }
 
-    getLayout() {
+    getLayout(): LayoutData {
         // console.log(this.nodeElements.length)
         return {
             nodes: [...this.nodeElements],
-            sockets: this.nodeElements.map((n) => Array.from(n.socketLayouts.values())).reduce((acc, val) => acc.concat(val), []),
-            ui: [],
+            connections: this.connections,
+            newConnection: this.newConnection,
+            // sockets: this.nodeElements.map((n) => Array.from(n.socketLayouts.values())).reduce((acc, val) => acc.concat(val), []),
+
+            // ui: [],
         };
     }
 
-    moveNodeToFront(node:NodeElement, idx?:number) {
-        if(idx === undefined) {
+    moveNodeToFront(node: NodeElement, idx?: number) {
+        if (idx === undefined) {
             idx = this.nodeElements.indexOf(node);
         }
         this.nodeElements.splice(idx, 1);
@@ -59,9 +70,13 @@ export class LayoutManager {
         this.activeCamera = camera;
     }
 
-    generateLayout(nodes?: BaseNode[]) {
+    generateLayout(nodes?: BaseNode[], newConnectionOrigin: string | null = null) {
         console.log("generateLayout")
-        this.nodeElements = []
+        this.nodeElements = [];
+        this.connections = [];
+        this.newConnection = null;
+        const socketLayouts = new Map<string, SocketElement>();
+
         if (!nodes)
             nodes = this.engine.nodes;
         for (const node of nodes) {
@@ -123,10 +138,16 @@ export class LayoutManager {
                 socketLayout.labelPosition = socketLayout.position.sub(new Vector2(this.activeCamera.convertPixelToUnit(this.activeCamera.nodeStyle.textMargin! + this.activeCamera.nodeStyle.socketRadius!, true), 0));
                 let realRadius = this.activeCamera.convertPixelToUnit(this.activeCamera.nodeStyle.socketRadius!, true);
                 socketLayout.topLeft = socketLayout.position.add(new Vector2(-realRadius, realRadius));
+                socketLayout.bottomRight = socketLayout.position.add(new Vector2(realRadius, -realRadius));
                 socketLayout.size = new Vector2(2 * this.activeCamera.nodeStyle.socketRadius!, 2 * this.activeCamera.nodeStyle.socketRadius!);
 
                 layout.socketLayouts.set(socket.uId!, socketLayout);
+                socketLayouts.set(socket.uId!, socketLayout);
                 offset += this.activeCamera.nodeStyle.textMargin! + textHeight;
+
+                if (newConnectionOrigin && newConnectionOrigin == socket.uId!) {
+                    this.newConnection = [socketLayout.position, null];
+                }
             }
 
             for (const socket of node.input) {
@@ -145,9 +166,11 @@ export class LayoutManager {
                 socketLayout.labelPosition = socketLayout.position.add(new Vector2(this.activeCamera.convertPixelToUnit(this.activeCamera.nodeStyle.textMargin! + this.activeCamera.nodeStyle.socketRadius!, true), 0));
                 let realRadius = this.activeCamera.convertPixelToUnit(this.activeCamera.nodeStyle.socketRadius!, true);
                 socketLayout.topLeft = socketLayout.position.add(new Vector2(-realRadius, realRadius));
+                socketLayout.bottomRight = socketLayout.position.add(new Vector2(realRadius, -realRadius));
                 socketLayout.size = new Vector2(2 * this.activeCamera.nodeStyle.socketRadius!, 2 * this.activeCamera.nodeStyle.socketRadius!);
 
                 layout.socketLayouts.set(socket.uId!, socketLayout);
+                socketLayouts.set(socket.uId!, socketLayout);
 
                 if (!socket.conection) {
                     offset += this.activeCamera.nodeStyle.textMargin! + textHeight / 2;
@@ -158,6 +181,10 @@ export class LayoutManager {
                     offset += this.activeCamera.nodeStyle.textMargin! + textHeight;
 
                 }
+
+                if (newConnectionOrigin && newConnectionOrigin == socket.uId!) {
+                    this.newConnection = [null, socketLayout.position];
+                }
             }
 
             let boxHeight = offset;
@@ -165,11 +192,21 @@ export class LayoutManager {
             layout.bottomRight = layout.position.add(new Vector2(this.activeCamera.convertPixelToUnit(boxWidth, true), -this.activeCamera.convertPixelToUnit(boxHeight, true)));
             this.nodeElements.push(layout);
         }
+
+        for (const socketId of socketLayouts.keys()) {
+            const socket = socketLayouts.get(socketId)!;
+            if (socket.socket.conection) {
+                // console.log(socket)
+                // console.log(socketLayouts.get(socket.socket.conection))
+                this.connections.push([socketLayouts.get(socket.socket.conection)!.position, socket.position]);
+            }
+        }
     }
 
     private generateInputLayout(element: SocketElement, offset: number, textHeight: number): [InputElement<any>, number] {
         switch (element.socket.type) {
             case SocketType.color:
+            case SocketType.vector2:
                 let pos = element.parent.position.add(new Vector2(this.activeCamera!.convertPixelToUnit(this.activeCamera!.nodeStyle.textMargin! + this.activeCamera!.nodeStyle.socketRadius!, true), - this.activeCamera!.convertPixelToUnit(offset, true)));
                 let colorInput = new ColorInputElement(
                     element,
@@ -188,3 +225,5 @@ export class LayoutManager {
         }
     }
 }
+
+export { LayoutManager, LayoutData };
