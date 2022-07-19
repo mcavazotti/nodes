@@ -2,11 +2,12 @@ import { Vector2 } from "../core/math/vector";
 import { ContextType } from "../context/context-types";
 import { InputEventType } from "./input-events";
 import { InputState } from "./input-state";
-import { Context, ContextManager } from "../context/context-manager";
+import { ContextManager } from "../context/context-manager";
+import { ContextData } from "../context/context-data";
 
 export class InputHandler {
     private static instance: InputHandler;
-    private eventListeners: Map<InputEventType, ((e: InputState, c: Context) => void)[]>;
+    private eventListeners: Map<InputEventType, ((e: InputState, c: ContextData) => void)[]>;
     private inputState: InputState;
     private context: ContextManager;
 
@@ -35,7 +36,7 @@ export class InputHandler {
         return InputHandler.instance;
     }
 
-    public addEventListener(type: InputEventType, func: (e: InputState, c: Context) => void, focus: ContextType = ContextType.any, activeContext: ContextType = ContextType.any) {
+    public addEventListener(type: InputEventType, func: (e: InputState, c: ContextData) => void, focus: ContextType = ContextType.any, activeContext: ContextType = ContextType.any) {
         if (this.eventListeners.has(type)) {
             let listeners = this.eventListeners.get(type)!;
             listeners.push(func);
@@ -60,6 +61,7 @@ export class InputHandler {
                 case 'mousePosition':
                     this.inputState.mouseMovement = state.mousePosition!.sub(this.inputState.mousePosition!);
                     this.inputState.mousePosition = state.mousePosition;
+                    this.inputState.mouseRawPosition = state.mouseRawPosition;
                     this.context.updateContext(state.mousePosition!, state.mouseRawPosition!);
                     // console.log(this.context.context.hover);
                     this.fireEvent(InputEventType.mousemove, {

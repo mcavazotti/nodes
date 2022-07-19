@@ -93,6 +93,7 @@ export class UiHandler {
                         this.camera.zoom = this.camera.zoom == 20 ? 20 : this.camera.zoom + 1;
                         break;
                 }
+                this.translateCameraAfterZoom(e.mousePosition!,e.mouseRawPosition!);
             }
         });
     }
@@ -109,5 +110,14 @@ export class UiHandler {
 
     setActiveCamera(camera: Camera) {
         this.camera = camera;
+    }
+
+    private translateCameraAfterZoom(cursorWorldPos: Vector2, cursorRawPos: Vector2) {
+        const newWorldPos = this.camera!.convertRasterCoordToWorld(cursorRawPos);
+        const offset = newWorldPos.sub(cursorWorldPos);
+        console.log(cursorWorldPos)
+        console.log(newWorldPos)
+        console.log(offset)
+        this.camera!.position = this.camera!.position.sub(offset); 
     }
 }
