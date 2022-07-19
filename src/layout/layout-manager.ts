@@ -21,6 +21,7 @@ export class LayoutManager {
     private canvas: Canvas;
 
     private nodeElements: NodeElement[] = [];
+    private socketElements: Map<string,SocketElement> = new Map();
     private connections: [Vector2, Vector2][] = [];
     private newConnection: [Vector2 | null, Vector2 | null] | null = null;
 
@@ -49,7 +50,7 @@ export class LayoutManager {
             nodes: [...this.nodeElements],
             connections: this.connections,
             newConnection: this.newConnection,
-            // sockets: this.nodeElements.map((n) => Array.from(n.socketLayouts.values())).reduce((acc, val) => acc.concat(val), []),
+            sockets: this.socketElements,
 
             // ui: [],
         };
@@ -68,11 +69,11 @@ export class LayoutManager {
     }
 
     generateLayout(nodes?: BaseNode[], newConnectionOrigin: string | null = null) {
-        console.log("generateLayout")
+        // console.log("generateLayout")
         this.nodeElements = [];
         this.connections = [];
         this.newConnection = null;
-        const socketLayouts = new Map<string, SocketElement>();
+        this.socketElements.clear();
 
         if (!nodes)
             nodes = this.engine.nodes;
@@ -139,7 +140,7 @@ export class LayoutManager {
                 socketLayout.size = new Vector2(2 * this.activeCamera.nodeStyle.socketRadius!, 2 * this.activeCamera.nodeStyle.socketRadius!);
 
                 layout.socketLayouts.set(socket.uId!, socketLayout);
-                socketLayouts.set(socket.uId!, socketLayout);
+                this.socketElements.set(socket.uId!, socketLayout);
                 offset += this.activeCamera.nodeStyle.textMargin! + textHeight;
 
                 if (newConnectionOrigin && newConnectionOrigin == socket.uId!) {
@@ -167,7 +168,7 @@ export class LayoutManager {
                 socketLayout.size = new Vector2(2 * this.activeCamera.nodeStyle.socketRadius!, 2 * this.activeCamera.nodeStyle.socketRadius!);
 
                 layout.socketLayouts.set(socket.uId!, socketLayout);
-                socketLayouts.set(socket.uId!, socketLayout);
+                this.socketElements.set(socket.uId!, socketLayout);
 
                 if (!socket.conection) {
                     offset += this.activeCamera.nodeStyle.textMargin! + textHeight / 2;
@@ -190,12 +191,12 @@ export class LayoutManager {
             this.nodeElements.push(layout);
         }
 
-        for (const socketId of socketLayouts.keys()) {
-            const socket = socketLayouts.get(socketId)!;
+        for (const socketId of this.socketElements.keys()) {
+            const socket = this.socketElements.get(socketId)!;
             if (socket.socket.conection) {
                 // console.log(socket)
                 // console.log(socketLayouts.get(socket.socket.conection))
-                this.connections.push([socketLayouts.get(socket.socket.conection)!.position, socket.position]);
+                this.connections.push([this.socketElements.get(socket.socket.conection)!.position, socket.position]);
             }
         }
     }

@@ -31,7 +31,7 @@ export class ContextManager {
     }
 
     updateContext(worldPointerPos: Vector2, rasterPointerPos: Vector2) {
-        console.log("updateContext")
+        // console.log("updateContext")
         let layout = LayoutManager.getInstance().getLayout();
         this._context.pointerPosition = worldPointerPos; 
 

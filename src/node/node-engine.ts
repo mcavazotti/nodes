@@ -48,6 +48,12 @@ export class NodeEngine{
 
         // TODO: check socket types
         input.conection = output.uId!;
+        // recompile
+    }
+
+    removeConnection(socket:Socket<any>) {
+        socket.conection = null;
+        // recompile
     }
 
 }

@@ -18,6 +18,7 @@ export class UiHandler {
     private input: InputHandler;
     private context: ContextManager;
     private layoutManager: LayoutManager;
+    private engine: NodeEngine;
     private mousePosition!: Vector2
     private connectSocket: Socket<any> | null = null;
 
@@ -25,6 +26,7 @@ export class UiHandler {
         this.input = InputHandler.getInstance();
         this.context = ContextManager.getInstance();
         this.layoutManager = LayoutManager.getInstance();
+        this.engine = NodeEngine.getInstance();
 
         this.input.addEventListener(InputEventType.mousedown, (e, c) => {
             if (e.mouseButtonDown!.includes(MouseInputType.leftButton)) {
@@ -33,8 +35,16 @@ export class UiHandler {
                     this.layoutManager.moveNodeToFront(this.context.context.activeElement as NodeElement);
                 }
                 if (this.context.context.active == ContextType.socket) {
-                    this.connectSocket = (this.context.context.activeElement as SocketElement).socket;
-                    this.layoutManager.generateLayout(undefined, this.context.context.activeElement!.id);
+                    let element = this.context.context.activeElement as SocketElement;
+                    if (element.socket.role == "input" && element.socket.conection) {
+                        this.connectSocket = this.layoutManager.getLayout().sockets.get(element.socket.conection)!.socket;
+                        this.engine.removeConnection(element.socket);
+                    } else {
+                        this.connectSocket = element.socket;
+                    }
+                    
+                    console.log(this.connectSocket.uId);
+                    this.layoutManager.generateLayout(undefined, this.connectSocket.uId);
                 }
                 this.mousePosition = e.mousePosition!;
             }
@@ -43,8 +53,12 @@ export class UiHandler {
         this.input.addEventListener(InputEventType.mouseup, (e, c) => {
 
             if (this.connectSocket) {
-                if(c.hover == ContextType.socket){
-                    NodeEngine.getInstance().createConnection(this.connectSocket,(c.hoverElement as SocketElement).socket);
+                if (c.hover == ContextType.socket) {
+                    try {
+                        this.engine.createConnection(this.connectSocket, (c.hoverElement as SocketElement).socket);
+                    } catch(e) {
+                        console.error(e)
+                    }
                 }
                 this.connectSocket = null;
                 this.layoutManager.generateLayout();
