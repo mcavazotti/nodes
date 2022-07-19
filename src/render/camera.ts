@@ -5,11 +5,11 @@ import { DefaultNodeStyle, NodeStyle } from "./styles/node-style";
 import * as primitives from "./primitives"
 import { ColorRGB } from "../core/color/color";
 import { NodeElement } from "../layout/layout-elements";
-import { Context } from "../context/context-manager";
 import { InputElement } from "../layout/elements/base-input-element";
 import { SocketType } from "../node/types/socket-types";
 import { ColorInputElement } from "../layout/elements/color-input-element";
-import { LayoutData } from "../layout/layout-manager";
+import { LayoutData } from "../layout/layout-data";
+import { ContextData } from "../context/context-data";
 
 
 
@@ -172,7 +172,7 @@ export class Camera {
 
     }
 
-    renderNodes(nodes: NodeElement[], context?: Context) {
+    renderNodes(nodes: NodeElement[], context?: ContextData) {
         // var socketPositions: Map<string, [Socket, Vector2]> = new Map();
 
         for (const node of nodes) {
@@ -235,7 +235,7 @@ export class Camera {
         }
     }
 
-    render(layout: LayoutData, context?: Context) {
+    render(layout: LayoutData, context?: ContextData) {
 
         this.renderBackground();
         this.board.context.fillStyle = "#00000000";

@@ -1,26 +1,20 @@
 import { Vector2 } from "../core/math/vector";
-import { LayoutElement } from "../layout/layout-elements";
 import { LayoutManager } from "../layout/layout-manager";
+import { ContextData } from "./context-data";
 import { ContextType } from "./context-types";
 
-interface Context {
-    hover: ContextType;
-    hoverElement: LayoutElement | null;
-    active: ContextType;
-    activeElement: LayoutElement | null;
-    pointerPosition: Vector2;
-}
 
-class ContextManager {
+
+export class ContextManager {
     private static instance: ContextManager;
-    private _context: Context = {
+    private _context: ContextData = {
         hover: ContextType.any,
         active: ContextType.any,
         activeElement: null,
         hoverElement: null,
         pointerPosition: new Vector2()
     }
-    get context(): Context {
+    get context(): ContextData {
         return { ...this._context };
     }
 
@@ -84,5 +78,3 @@ class ContextManager {
         return (pos.x >= topLeft.x) && (pos.x <= bottomRight.x) && (pos.y <= topLeft.y) && (pos.y >= bottomRight.y);
     }
 }
-
-export { ContextManager, Context }

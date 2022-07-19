@@ -1,7 +1,8 @@
 import { Vector2 } from "../../core/math/vector";
 import { BaseNode } from "../../node/definitions";
-import { LayoutElement, SocketElement } from "../layout-elements";
+import { LayoutElement } from "./base-elements";
 import { LayoutElementTypes } from "./element-types";
+import { SocketElement } from "./socket-element";
 
 export class NodeElement extends LayoutElement {
     node: BaseNode;

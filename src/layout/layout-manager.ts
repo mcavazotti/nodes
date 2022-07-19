@@ -7,15 +7,12 @@ import { Camera } from "../render/camera";
 import { InputElement } from "./elements/base-input-element";
 import { ColorInputElement } from "./elements/color-input-element";
 import { LayoutElementTypes } from "./elements/element-types";
+import { LayoutData } from "./layout-data";
 import { NodeElement, SocketElement } from "./layout-elements";
 
-interface LayoutData {
-    nodes: NodeElement[];
-    connections: [Vector2, Vector2][];
-    newConnection: [Vector2 | null, Vector2 | null] | null;
-}
 
-class LayoutManager {
+
+export class LayoutManager {
     private static instance: LayoutManager;
     private activeCamera: Camera | null = null;
 
@@ -225,5 +222,3 @@ class LayoutManager {
         }
     }
 }
-
-export { LayoutManager, LayoutData };
