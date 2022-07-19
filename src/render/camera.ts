@@ -184,11 +184,22 @@ export class Camera {
         for (const connection of connections) {
             this.board.context.strokeStyle = this.nodeStyle.connectionColor!;
             this.board.context.lineWidth = this.nodeStyle.connectionThickness!;
+            let middlePoint1: Vector2;
+            let middlePoint2: Vector2;
+
+            if (connection[0].sub(connection[1]).length < this.nodeStyle.connectionControlPointOffset!) {
+                middlePoint1 = connection[0];
+                middlePoint2 = connection[1];
+            }
+            else {
+                middlePoint1 = connection[0].add(new Vector2(this.nodeStyle.connectionControlPointOffset!, 0));
+                middlePoint2 = connection[1].add(new Vector2(-this.nodeStyle.connectionControlPointOffset!, 0));
+            }
 
             let controlPoints: [Vector2, Vector2, Vector2, Vector2] = [
                 this.convertWorldCoordToRaster(connection[0]),
-                this.convertWorldCoordToRaster(connection[0].add(new Vector2(this.nodeStyle.connectionControlPointOffset!, 0))),
-                this.convertWorldCoordToRaster(connection[1].add(new Vector2(-this.nodeStyle.connectionControlPointOffset!, 0))),
+                this.convertWorldCoordToRaster(middlePoint1),
+                this.convertWorldCoordToRaster(middlePoint2),
                 this.convertWorldCoordToRaster(connection[1]),
             ];
             primitives.cubicBelzier(this.board.context, controlPoints);
@@ -241,14 +252,14 @@ export class Camera {
         this.board.context.fillStyle = "#00000000";
         this.board.context.clearRect(0, 0, this.board.element.width, this.board.element.height);
 
-        if(layout.connections) {
+        if (layout.connections) {
             this.renderConnections(layout.connections);
         }
         if (layout.nodes) {
             this.renderNodes(layout.nodes, context);
             // this.renderLayout(layout.nodes);
         }
-        if(layout.newConnection && context) {
+        if (layout.newConnection && context) {
             console.log(layout.newConnection)
             console.log([layout.newConnection[0] ?? context.pointerPosition, layout.newConnection[1] ?? context.pointerPosition])
             console.log(context.pointerPosition)
