@@ -5,7 +5,6 @@
     <script type="module">
         import { main } from "./src/main.ts"
         window.onload = () => {
-            console.log("aqui");
             main()
         };
     </script>
@@ -13,11 +12,16 @@
 </head>
 
 <body>
-    <div id="div-canvas">
-        <canvas id="canvas-bg" width="800" height="600"></canvas>
-        <canvas id="canvas-board" width="800" height="600"></canvas>
-        <canvas id="canvas-ui" width="800" height="600"></canvas>
-        <canvas id="canvas-input" width="800" height="600"></canvas>
+    <div id="env">
+        <div id="div-canvas">
+            <canvas id="canvas-bg" width="800" height="600"></canvas>
+            <canvas id="canvas-board" width="800" height="600"></canvas>
+            <canvas id="canvas-ui" width="800" height="600"></canvas>
+            <canvas id="canvas-input" width="800" height="600"></canvas>
+        </div>
+        <div id="div-output">
+            <canvas id="canvas-output" width="200" height="200"></canvas>
+        </div>
     </div>
 </body>
 
