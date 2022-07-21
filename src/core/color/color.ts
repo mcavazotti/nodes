@@ -11,9 +11,9 @@ class ColorRGB extends Vector3 {
             hex = standardizeColor(hex);
             if (hex[0] == '#')
                 hex = hex.slice(1);
-            r = parseInt(hex.slice(0, 2), 16);
-            g = parseInt(hex.slice(2, 4), 16);
-            b = parseInt(hex.slice(4, 6), 16);
+            r = parseInt(hex.slice(0, 2), 16) / 255;
+            g = parseInt(hex.slice(2, 4), 16) / 255;
+            b = parseInt(hex.slice(4, 6), 16) / 255;
         }
         super(r as number, g, b);
     }
@@ -40,7 +40,7 @@ class ColorRGB extends Vector3 {
     }
 
     toHex(htmlFormat: boolean = true): string {
-        return `${htmlFormat ? '#' : ''}${this.r.toString(16).padStart(2, '0')}${this.g.toString(16).padStart(2, '0')}${this.b.toString(16).padStart(2, '0')}`.toUpperCase();
+        return `${htmlFormat ? '#' : ''}${Math.round(this.r * 255).toString(16).padStart(2, '0')}${Math.round(this.g * 255).toString(16).padStart(2, '0')}${Math.round(this.b * 255).toString(16).padStart(2, '0')}`.toUpperCase();
     }
 }
 
@@ -55,10 +55,10 @@ class ColorRGBA extends Vector4 {
             hex = standardizeColor(hex);
             if (hex[0] == '#')
                 hex = hex.slice(1);
-            r = parseInt(hex.slice(0, 2), 16);
-            g = parseInt(hex.slice(2, 4), 16);
-            b = parseInt(hex.slice(4, 6), 16);
-            a = parseInt(hex.slice(6, 8), 16);
+            r = parseInt(hex.slice(0, 2), 16) / 255;
+            g = parseInt(hex.slice(2, 4), 16) / 255;
+            b = parseInt(hex.slice(4, 6), 16) / 255;
+            a = parseInt(hex.slice(6, 8), 16) / 255;
         }
         super(r as number, g, b, a);
     }
@@ -92,7 +92,7 @@ class ColorRGBA extends Vector4 {
     }
 
     toHex(htmlFormat: boolean = true): string {
-        return `${htmlFormat ? '#' : ''}${this.r.toString(16).padStart(2, '0')}${this.g.toString(16).padStart(2, '0')}${this.b.toString(16).padStart(2, '0')}`.toUpperCase();
+        return `${htmlFormat ? '#' : ''}${Math.round(this.r * 255).toString(16).padStart(2, '0')}${Math.round(this.g * 255).toString(16).padStart(2, '0')}${Math.round(this.b * 255).toString(16).padStart(2, '0')}`.toUpperCase();
     }
 
 }

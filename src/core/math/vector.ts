@@ -50,6 +50,10 @@ class Vector2 {
         this.y /= l;
         return this;
     }
+
+    toString(): string {
+        return `(${this.x}, ${this.y})`
+    }
 }
 
 class Vector3 {
@@ -114,6 +118,10 @@ class Vector3 {
         this.z /= l;
         return this;
     }
+
+    toString(): string {
+        return `(${this.x}, ${this.y}, ${this.z})`
+    }
 }
 
 class Vector4 {
@@ -173,6 +181,10 @@ class Vector4 {
         this.z /= l;
         this.w /= l;
         return this;
+    }
+
+    toString(): string {
+        return `(${this.x}, ${this.y}, ${this.z}, ${this.w})`
     }
 }
 export { Vector2, Vector3, Vector4 };
