@@ -37,4 +37,10 @@ export abstract class BaseNode {
         }
     }
 
+    protected getVariableNameForSocket(id:string): string {
+        return id.replace('-','');
+    }
+
+    abstract code(): string;
+
 }
