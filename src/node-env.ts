@@ -19,9 +19,10 @@ export class NodeEnviroment {
     private uiHandler: UiHandler
     private contextManager: ContextManager;
 
-    constructor(bg: Canvas, board: Canvas, input: Canvas) {
+    constructor(bg: Canvas, board: Canvas, input: Canvas, onCompile:((fs:string)=> void)) {
         this.inputHandler = InputHandler.getInstance();
         this.engine = NodeEngine.getInstance();
+        this.engine.setListener(onCompile);
         this.bg = bg;
         this.board = board;
         this.input = input;

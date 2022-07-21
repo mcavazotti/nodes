@@ -1,3 +1,4 @@
+import { compileShader } from "../compiler/shader-compiler";
 import { Vector2 } from "../core/math/vector";
 import { BaseNode, CoordinateNode, OutputNode } from "./definitions";
 import { Socket } from "./types/socket";
@@ -5,18 +6,27 @@ import { Socket } from "./types/socket";
 export class NodeEngine {
 
     static instance: NodeEngine;
+
+    private onCompileListener?: ((fs: string) => void);
     private _nodes: Map<string, BaseNode> = new Map();
     private _nodeArray: BaseNode[] = [];
+    private outputNode: OutputNode;
     get nodes(): BaseNode[] {
         return [...this._nodeArray];
     }
 
+    setListener(func: ((fs: string) => void)) {
+        this.onCompileListener = func;
+        this.compile();
+    }
+
     private constructor() {
-        let output = new OutputNode(new Vector2());
-        this._nodes.set(output.uId, output);
+        this.outputNode = new OutputNode(new Vector2());
+        this._nodes.set(this.outputNode.uId, this.outputNode);
         let coord = new CoordinateNode(new Vector2(-3, 0));
         this._nodes.set(coord.uId, coord);
-        this._nodeArray.push(output, coord);
+        this._nodeArray.push(this.outputNode, coord);
+        
     }
 
     static getInstance(): NodeEngine {
@@ -53,13 +63,19 @@ export class NodeEngine {
 
         // TODO: check socket types
         input.conection = output.uId!;
-        // recompile
+        this.compile();
     }
 
     removeConnection(socket: Socket<any>) {
         socket.conection = null;
-        // recompile
+        this.compile();
     }
 
-        
+    compile() {
+        if (this.onCompileListener) {
+            this.onCompileListener(compileShader(this._nodes, this.outputNode.uId));
+        }
+    }
+
+
 }

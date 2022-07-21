@@ -64,8 +64,8 @@ export class GlEnviroment {
             this.gl.attachShader(this.program, this.vertexShader);
             this.gl.attachShader(this.program, this.fragmentShader);
             this.gl.linkProgram(this.program);
-
-            if (this.gl.getProgramParameter(this.program, this.gl.LINK_STATUS)) {
+            console.log(this.gl.getProgramInfoLog(this.program))
+            if (!this.gl.getProgramParameter(this.program, this.gl.LINK_STATUS)) {
                 let error = Error(`Unable to initialize the shader program: ${this.gl.getProgramInfoLog(this.program)}`);
                 delete this.program;
                 throw error;
@@ -90,6 +90,7 @@ export class GlEnviroment {
     }
 
     refreshProgram(fragShaderSrc: string) {
+        console.log(fragShaderSrc)
         this.fragmentShader = this.loadShader(this.gl.FRAGMENT_SHADER, fragShaderSrc);
         this.createProgram();
         this.render();

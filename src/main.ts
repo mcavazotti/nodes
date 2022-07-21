@@ -1,3 +1,4 @@
+import { GlEnviroment } from "./gl-env";
 import { NodeEnviroment } from "./node-env";
 
 export function main() {
@@ -10,10 +11,13 @@ export function main() {
     const input = document.getElementById("canvas-input") as HTMLCanvasElement;
     const inutContext = input.getContext("2d")!;
 
+    const gl = new GlEnviroment("canvas-output");
     const nodes = new NodeEnviroment(
         { element: background, context: bgContext },
         { element: board, context: boardContext },
-        { element: input, context: inutContext });
+        { element: input, context: inutContext },(fragShader)=> {
+            gl.refreshProgram(fragShader);
+        });
 
     nodes.start();
 
