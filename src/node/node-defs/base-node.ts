@@ -1,6 +1,7 @@
 import { Vector2 } from "../../core/math/vector";
 import { NodeClass } from "../types/node-classes";
 import { Socket } from "../types/socket";
+import { SocketType } from "../types/socket-types";
 
 export abstract class BaseNode {
     protected _label!: string;
@@ -9,7 +10,7 @@ export abstract class BaseNode {
     protected _output!: Socket<any>[];
 
     private static idCounter: number = 0;
-    
+
     get label() { return this._label };
     get type() { return this._type };
     get input() { return this._input };
@@ -27,20 +28,17 @@ export abstract class BaseNode {
     protected setSocketsId() {
         let id = 0;
         for (const socket of this._input) {
-            socket.uId = `${this.uId.toString().padStart(4, '0')}-i-${id.toString().padStart(4, '0') }`;
+            socket.uId = `${this.uId}-i-${id.toString().padStart(4, '0')}`;
             id++;
         }
-        
-        for (const socket of this._output) {
-            socket.uId = `${this.uId.toString().padStart(4, '0')}-o-${id.toString().padStart(4, '0') }`;
-            id++;
-        }
-    }
 
-    protected getVariableNameForSocket(id:string): string {
-        return id.replace('-','');
+        for (const socket of this._output) {
+            socket.uId = `${this.uId}-o-${id.toString().padStart(4, '0')}`;
+            id++;
+        }
     }
 
     abstract code(): string;
+    abstract definitions(): [string, string][];
 
 }

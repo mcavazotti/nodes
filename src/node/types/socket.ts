@@ -5,6 +5,6 @@ export interface Socket<T> {
     type: SocketType;
     role: "input" | "output";
     uId?: string;
-    conection: string | null;
+    conection: [string, SocketType] | null;
     value?: T;
 }

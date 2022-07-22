@@ -15,7 +15,7 @@ export function main() {
     const nodes = new NodeEnviroment(
         { element: background, context: bgContext },
         { element: board, context: boardContext },
-        { element: input, context: inutContext },(fragShader)=> {
+        { element: input, context: inutContext }, gl.uniforms, (fragShader) => {
             gl.refreshProgram(fragShader);
         });
 

@@ -37,7 +37,7 @@ export class UiHandler {
                 if (this.context.context.active == ContextType.socket) {
                     let element = this.context.context.activeElement as SocketElement;
                     if (element.socket.role == "input" && element.socket.conection) {
-                        this.connectSocket = this.layoutManager.getLayout().sockets.get(element.socket.conection)!.socket;
+                        this.connectSocket = this.layoutManager.getLayout().sockets.get(element.socket.conection[0])!.socket;
                         this.engine.removeConnection(element.socket);
                     } else {
                         this.connectSocket = element.socket;

@@ -196,7 +196,7 @@ export class LayoutManager {
             if (socket.socket.conection) {
                 // console.log(socket)
                 // console.log(socketLayouts.get(socket.socket.conection))
-                this.connections.push([this.socketElements.get(socket.socket.conection)!.position, socket.position]);
+                this.connections.push([this.socketElements.get(socket.socket.conection[0])!.position, socket.position]);
             }
         }
     }

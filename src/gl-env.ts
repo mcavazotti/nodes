@@ -11,6 +11,10 @@ export class GlEnviroment {
     }
     `;
 
+    readonly uniforms: string[] = [
+        "vec2 uResolution;"
+    ];
+
     private vertexShader: WebGLShader;
     private fragmentShader?: WebGLShader;
     private program?: WebGLProgram;
@@ -79,6 +83,9 @@ export class GlEnviroment {
 
 
         let vertexPosition = this.gl.getAttribLocation(this.program, 'aVertexPos');
+        
+        let uResPosition = this.gl.getUniformLocation(this.program,"uResolution");
+        this.gl.uniform2f(uResPosition,this.canvas.width!,this.canvas.height!);
 
         this.gl.clearColor(0, 0, 0, 0);
         this.gl.clear(this.gl.COLOR_BUFFER_BIT);

@@ -15,9 +15,15 @@ export class NodeEngine {
         return [...this._nodeArray];
     }
 
+    private uniforms: string[] = []; 
+
     setListener(func: ((fs: string) => void)) {
         this.onCompileListener = func;
         this.compile();
+    }
+
+    setUniforms(uniforms: string[]){
+        this.uniforms = uniforms;
     }
 
     private constructor() {
@@ -62,8 +68,13 @@ export class NodeEngine {
         }
 
         // TODO: check socket types
-        input.conection = output.uId!;
-        this.compile();
+        input.conection = [output.uId!, output.type];
+        try{
+            this.compile();
+        }catch(e) {
+            input.conection = null;
+            console.error(e);
+        }
     }
 
     removeConnection(socket: Socket<any>) {
@@ -72,8 +83,10 @@ export class NodeEngine {
     }
 
     compile() {
+        console.log("compile")
+        console.log(this.uniforms)
         if (this.onCompileListener) {
-            this.onCompileListener(compileShader(this._nodes, this.outputNode.uId));
+            this.onCompileListener(compileShader(this._nodes, this.outputNode.uId, this.uniforms));
         }
     }
 
