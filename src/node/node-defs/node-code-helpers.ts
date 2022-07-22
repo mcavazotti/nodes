@@ -2,7 +2,6 @@ import { Vector2, Vector3 } from "../../core/math/vector";
 import { SocketType } from "../types/socket-types";
 
 function getVariableNameForSocket(id: string): string {
-    console.log(id)
     return id.replace(/\-/g, '');
 }
 

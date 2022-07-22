@@ -8,8 +8,6 @@ interface CompilationData {
 }
 
 function compileShader(nodes: Map<string, BaseNode>, outputId: string, uniforms: string[]): string {
-    console.log("compileShader")
-    console.log(uniforms)
 
     let data: CompilationData = {
         definitions: new Map(),

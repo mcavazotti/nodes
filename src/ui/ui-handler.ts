@@ -43,7 +43,6 @@ export class UiHandler {
                         this.connectSocket = element.socket;
                     }
                     
-                    console.log(this.connectSocket.uId);
                     this.layoutManager.generateLayout(undefined, this.connectSocket.uId);
                 }
                 this.mousePosition = e.mousePosition!;
@@ -115,9 +114,7 @@ export class UiHandler {
     private translateCameraAfterZoom(cursorWorldPos: Vector2, cursorRawPos: Vector2) {
         const newWorldPos = this.camera!.convertRasterCoordToWorld(cursorRawPos);
         const offset = newWorldPos.sub(cursorWorldPos);
-        console.log(cursorWorldPos)
-        console.log(newWorldPos)
-        console.log(offset)
+
         this.camera!.position = this.camera!.position.sub(offset); 
     }
 }

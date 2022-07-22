@@ -1,6 +1,6 @@
 import { compileShader } from "../compiler/shader-compiler";
 import { Vector2 } from "../core/math/vector";
-import { BaseNode, CoordinateNode, OutputNode } from "./definitions";
+import { BaseNode, CoordinateNode, OutputNode, SeparateXYNode } from "./definitions";
 import { Socket } from "./types/socket";
 
 export class NodeEngine {
@@ -29,9 +29,14 @@ export class NodeEngine {
     private constructor() {
         this.outputNode = new OutputNode(new Vector2());
         this._nodes.set(this.outputNode.uId, this.outputNode);
+        
         let coord = new CoordinateNode(new Vector2(-3, 0));
         this._nodes.set(coord.uId, coord);
-        this._nodeArray.push(this.outputNode, coord);
+
+        let sep = new SeparateXYNode(new Vector2(-3,2));
+        this._nodes.set(sep.uId,sep);
+
+        this._nodeArray.push(this.outputNode, coord, sep);
         
     }
 
@@ -83,8 +88,6 @@ export class NodeEngine {
     }
 
     compile() {
-        console.log("compile")
-        console.log(this.uniforms)
         if (this.onCompileListener) {
             this.onCompileListener(compileShader(this._nodes, this.outputNode.uId, this.uniforms));
         }
