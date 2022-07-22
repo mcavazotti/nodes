@@ -59,6 +59,10 @@ class ColorRGBA extends Vector4 {
             g = parseInt(hex.slice(2, 4), 16) / 255;
             b = parseInt(hex.slice(4, 6), 16) / 255;
             a = parseInt(hex.slice(6, 8), 16) / 255;
+
+            if(isNaN(a)) {
+                a = 1.0;
+            }
         }
         super(r as number, g, b, a);
     }
