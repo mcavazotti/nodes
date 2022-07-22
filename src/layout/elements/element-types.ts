@@ -1,5 +1,5 @@
 export enum LayoutElementTypes {
-    node,
-    socket,
-    colorInput
+    node = "node",
+    socket = "socket",
+    colorInput = "colorInput"
 };

@@ -1,7 +1,7 @@
 export enum ContextType {
-    any,
-    board,
-    node,
-    socket,
-    ui
+    any ="any",
+    board = "board",
+    node = "node",
+    socket = "socket",
+    ui = "ui"
 }

@@ -1,7 +1,7 @@
 import { Vector2 } from "../math/vector";
 
 enum SelectableType {
-    node
+    node ="node"
 }
 
 interface Selectable {

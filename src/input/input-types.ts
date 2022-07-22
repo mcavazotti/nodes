@@ -1,7 +1,7 @@
 export enum MouseInputType {
-    leftButton,
-    middleButton,
-    rightButton,
-    scrollUp,
-    scrollDown
+    leftButton = "leftButton",
+    middleButton = "middleButton",
+    rightButton = "rightButton",
+    scrollUp = "scrollUp",
+    scrollDown = "scrollDown"
 }

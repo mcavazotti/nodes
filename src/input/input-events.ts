@@ -1,6 +1,6 @@
 export enum InputEventType {
-    mousemove,
-    mousedown,
-    mouseup,
-    mousewheel
+    mousemove = "mousemove",
+    mousedown = "mousedown",
+    mouseup = "mouseup",
+    mousewheel = "mousewheel"
 }

@@ -1,5 +1,5 @@
 export enum NodeClass {
-    input,
-    mathOp,
-    output
+    input = "input",
+    mathOp = "mathOp",
+    output = "output"
 }
