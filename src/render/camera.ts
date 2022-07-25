@@ -230,18 +230,26 @@ export class Camera {
         this.board.context.fillStyle = "#45bbffaa";
         for (const node of nodes) {
             let rasterPos = this.convertWorldCoordToRaster(node.position);
-            let tmp = node.bottomRight.sub(node.position);
-            let rasterDim = new Vector2(this.convertUnitToPixel(Math.abs(tmp.x)), this.convertUnitToPixel(Math.abs(tmp.y)))
+            let rasterDim = new Vector2(this.realPixelSize(node.size.x),this.realPixelSize(node.size.y));
+            console.log(rasterDim)
             this.board.context.fillRect(rasterPos.x, rasterPos.y, rasterDim.x, rasterDim.y);
         }
 
-        this.board.context.fillStyle = "#ffc745aa";
         for (const node of nodes) {
             for (const socket of node.socketLayouts) {
-                let rasterPos = this.convertWorldCoordToRaster(socket[1].topLeft);
-                let tmp = socket[1].bottomRight.sub(socket[1].topLeft);
-                let rasterDim = new Vector2(this.convertUnitToPixel(Math.abs(tmp.x)), this.convertUnitToPixel(Math.abs(tmp.y)))
+                this.board.context.fillStyle = "#ffc745aa";
+                let socketElement = socket[1];
+                let rasterPos = this.convertWorldCoordToRaster(socketElement.topLeft);
+                let rasterDim = new Vector2(this.realPixelSize(socketElement.size.x), this.realPixelSize(socketElement.size.y));
                 this.board.context.fillRect(rasterPos.x, rasterPos.y, rasterDim.x, rasterDim.y);
+
+                if (socketElement.input) {
+                    let input = socketElement.input;
+
+                    let inputRasterPos = this.convertWorldCoordToRaster(input.position);
+                    let inputRasterSize = new Vector2(this.realPixelSize(input.size.x), this.realPixelSize(input.size.y));
+                    this.board.context.fillRect(inputRasterPos.x, inputRasterPos.y, inputRasterSize.x, inputRasterSize.y);
+                }
             }
         }
     }
@@ -257,7 +265,7 @@ export class Camera {
         }
         if (layout.nodes) {
             this.renderNodes(layout.nodes, context);
-            // this.renderLayout(layout.nodes);
+            this.renderLayout(layout.nodes);
         }
         if (layout.newConnection && context) {
             this.renderConnections([[layout.newConnection[0] ?? context.pointerPosition, layout.newConnection[1] ?? context.pointerPosition]])
