@@ -12,7 +12,7 @@ export class GlEnviroment {
     `;
 
     readonly uniforms: string[] = [
-        "vec2 uResolution;"
+        "uniform vec2 uResolution;"
     ];
 
     private vertexShader: WebGLShader;
@@ -80,18 +80,18 @@ export class GlEnviroment {
         if (!this.program)
             throw Error("Program not loaded");
 
+        this.gl.useProgram(this.program);
 
         let vertexPosition = this.gl.getAttribLocation(this.program, 'aVertexPos');
-        
-        let uResPosition = this.gl.getUniformLocation(this.program,"uResolution");
-        this.gl.uniform2f(uResPosition,this.canvas.width!,this.canvas.height!);
+
+        let uResPosition = this.gl.getUniformLocation(this.program, "uResolution");
+        this.gl.uniform2f(uResPosition, this.canvas.width!, this.canvas.height!);
 
         this.gl.clearColor(0, 0, 0, 0);
         this.gl.clear(this.gl.COLOR_BUFFER_BIT);
         this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.positionBuffer);
         this.gl.vertexAttribPointer(vertexPosition, 2, this.gl.FLOAT, false, 0, 0);
         this.gl.enableVertexAttribArray(vertexPosition);
-        this.gl.useProgram(this.program);
         this.gl.drawArrays(this.gl.TRIANGLE_STRIP, 0, 4);
     }
 
