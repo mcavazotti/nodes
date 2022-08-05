@@ -210,7 +210,7 @@ export class LayoutManager {
                     element,
                     pos,
                     new Vector2(30, 20),
-                    pos.add(new Vector2(this.activeCamera!.convertPixelToUnit(60, true), -this.activeCamera!.convertPixelToUnit(40, true))),
+                    pos.add(new Vector2(this.activeCamera!.convertPixelToUnit(30, true), -this.activeCamera!.convertPixelToUnit(20, true))),
                     (c) => {
                         // TODO
                     }

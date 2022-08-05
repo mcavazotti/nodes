@@ -3,5 +3,6 @@ export enum ContextType {
     board = "board",
     node = "node",
     socket = "socket",
+    input= "input",
     ui = "ui"
 }

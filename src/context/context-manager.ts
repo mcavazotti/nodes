@@ -52,6 +52,13 @@ export class ContextManager {
                         this._context.hoverElement = socket;
                         return;
                     }
+                    if(socket.input) {
+                        if(this.isInside(worldPointerPos, socket.input.position, socket.input.bottomRight)) {
+                            this._context.hover = ContextType.input;
+                            this._context.hoverElement = socket.input;
+                            return;
+                        }
+                    }
                 }
                 if (this.isInside(worldPointerPos, node.position, node.bottomRight)) {
                     // console.log("on Node")
