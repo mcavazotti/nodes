@@ -1,6 +1,9 @@
 import { NodeClass } from "../../node/types/node-classes";
 import { SocketType } from "../../node/types/socket-types";
 
+/**
+ * Style definitions used by the `Camera` to render nodes, sockets and connections
+ */
 interface NodeStyle {
     bgColor?: string;
     borderStyle?: string;

@@ -8,9 +8,16 @@ import { LayoutManager } from "./layout/layout-manager";
 import { UiHandler } from "./ui/ui-handler";
 import { ContextManager } from "./context/context-manager";
 
+
+/**
+ * Class that represents the node editor, with all of its functionalities.
+ */
 export class NodeEnviroment {
+    /** Layer used to render the background */
     private bg: Canvas;
+    /** Layer used to render all the nodes and their connections */
     private board: Canvas;
+    /** Layer used to capture user interactions. It should be on top of all of the other canvas elements */
     private input: Canvas;
     private camera: Camera;
     private inputHandler: InputHandler;
@@ -19,6 +26,14 @@ export class NodeEnviroment {
     private uiHandler: UiHandler
     private contextManager: ContextManager;
 
+    /**
+     * 
+     * @param bg Canvas for background layer
+     * @param board Canvas for board layer
+     * @param input Canvas to capture user interaction. Should be on top of other canvas
+     * @param uniforms Uniforms available for the shader
+     * @param onCompile Callback for when the fragment shader source code is generated
+     */
     constructor(bg: Canvas, board: Canvas, input: Canvas, uniforms: string[], onCompile:((fs:string)=> void)) {
         this.inputHandler = InputHandler.getInstance();
         this.engine = NodeEngine.getInstance();
@@ -37,6 +52,16 @@ export class NodeEnviroment {
         this.contextManager = ContextManager.getInstance();
 
     }
+
+    /**
+     * Starts the node editor.
+     * 
+     * The editor is reactive, that means that it only responds to user interaction. This interaction is captured through HTMLElement's `addEventListener`.
+     * 
+     * Besides setting up the listeners in the input canvas, it also processes the events and sends them to the InputHandler.
+     * 
+     * This method also calls `Camera.render()` on specific types of events.
+     */
     start() {
         this.layoutManager.generateLayout(this.engine.nodes);
         this.camera.render(this.layoutManager.getLayout(),this.contextManager.context );

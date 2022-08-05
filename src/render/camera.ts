@@ -12,7 +12,9 @@ import { LayoutData } from "../layout/layout-data";
 import { ContextData } from "../context/context-data";
 
 
-
+/**
+ * Class responsible for drawing on the canvas and converting coordinates between world space and raster space
+ */
 export class Camera {
     position: Vector2;
     frustrumWidth: number;
@@ -30,7 +32,16 @@ export class Camera {
         return new Vector2(this.bg.element.width, this.bg.element.height);
     }
 
-
+    /**
+     * 
+     * @param bg Background canvas layer
+     * @param board Board canvas layer
+     * @param position Camera position
+     * @param frustrumWidth Camera's frustrum width
+     * @param zoom Zoom level
+     * @param bgStyle Custom background style
+     * @param nodeStyle Custom node style
+     */
     constructor(bg: Canvas, board: Canvas, position: Vector2 = new Vector2(0, 0), frustrumWidth: number = 10, zoom: number = 1, bgStyle: BgStyle = {}, nodeStyle: NodeStyle = {}) {
 
         this.position = position;
@@ -71,18 +82,41 @@ export class Camera {
         return new Vector2(this.position.x + relativeOffset.x, this.position.y + relativeOffset.y);
     }
 
+    /**
+     * Converts world space lenght to pixel length
+     * 
+     * @param unit Length in world space units
+     * @param ignoreZoom 
+     * @returns Length in pixels (scaled to zoom or not)
+     */
     convertUnitToPixel(unit: number, ignoreZoom: boolean = false): number {
         return unit * this.canvasDimention.x / this.frustrumWidth * (ignoreZoom ? 1 : this.zoom);
     }
 
+    /**
+     * Converts pixel length to world units
+     * 
+     * @param pixel Length in pixels
+     * @param ignoreZoom 
+     * @returns Length in world units (scaled to zoom or not)
+     */
     convertPixelToUnit(pixel: number, ignoreZoom: boolean = false): number {
         return pixel * this.frustrumWidth * (ignoreZoom ? 1 : this.zoom) / this.canvasDimention.x;
     }
 
+    /**
+     * Scales pixel length to zoom
+     * 
+     * @param size Pixel length
+     * @returns Real pixel length after applying zoom
+     */
     realPixelSize(size: number) {
         return size / this.zoom;
     }
 
+    /**
+     * Renders background on the background layer canvas
+     */
     renderBackground(): void {
         this.bg.context.fillStyle = this.bgStyle.bgColor!;
         this.bg.context.fillRect(0, 0, this.bg.element.width, this.bg.element.height);
@@ -119,6 +153,12 @@ export class Camera {
 
     }
 
+    /**
+     * Draws a single node on the board layer
+     * 
+     * @param nodeLayout 
+     * @param selected Flag to draw highlight
+     */
     private renderNode(nodeLayout: NodeElement, selected: boolean = false) {
         this.board.context.fillStyle = this.nodeStyle.bgColor!;
 
@@ -172,6 +212,12 @@ export class Camera {
 
     }
 
+    /**
+     * Draws all the nodes on the board layer. It's a wrapper function for `renderNode`
+     * 
+     * @param nodes List of node elements
+     * @param context ContextData used to find selected node, if any
+     */
     renderNodes(nodes: NodeElement[], context?: ContextData) {
         // var socketPositions: Map<string, [Socket, Vector2]> = new Map();
 
@@ -180,6 +226,12 @@ export class Camera {
             this.renderNode(node, selected);
         }
     }
+
+    /**
+     * Draws connections between sockets on the board layer
+     * 
+     * @param connections List of tuples that represents the position of the connected sockets
+     */
     renderConnections(connections: [Vector2, Vector2][]) {
         for (const connection of connections) {
             this.board.context.strokeStyle = this.nodeStyle.connectionColor!;
@@ -207,6 +259,14 @@ export class Camera {
         }
     }
 
+    /**
+     * Draws the input element on the board layer.
+     * 
+     * It should aways draw over the nodes.
+     * 
+     * @param input Input element. It's specific type is infered based on the next parameter
+     * @param type Type of input
+     */
     renderInput(input: InputElement<any>, type: SocketType) {
         switch (type) {
             case SocketType.color: {
@@ -226,12 +286,17 @@ export class Camera {
         }
     }
 
+
+    /**
+     * Draws semitransparent layout boxes. Used for debugging purposes
+     * 
+     * @param nodes List of node elements
+     */
     renderLayout(nodes: NodeElement[]) {
         this.board.context.fillStyle = "#45bbffaa";
         for (const node of nodes) {
             let rasterPos = this.convertWorldCoordToRaster(node.position);
             let rasterDim = new Vector2(this.realPixelSize(node.size.x),this.realPixelSize(node.size.y));
-            console.log(rasterDim)
             this.board.context.fillRect(rasterPos.x, rasterPos.y, rasterDim.x, rasterDim.y);
         }
 
@@ -254,6 +319,11 @@ export class Camera {
         }
     }
 
+    /**
+     * Renders the node editor, its UI and its board
+     * @param layout
+     * @param context 
+     */
     render(layout: LayoutData, context?: ContextData) {
 
         this.renderBackground();

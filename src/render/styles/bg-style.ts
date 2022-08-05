@@ -1,5 +1,8 @@
 import { Vector2 } from "../../core/math/vector";
 
+/**
+ * Style definitions used by `Camera` to render the background
+ */
 interface BgStyle {
     bgColor?: string,
     lineColor?: string,

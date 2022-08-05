@@ -1,7 +1,15 @@
+
+/**
+ * Class that handles the WebGL canvas context and the shader compilation and usage
+ */
 export class GlEnviroment {
+    /** Canvas HTML element */
     canvas: HTMLCanvasElement;
+    /** WebGL context */
     gl: WebGL2RenderingContext;
-    positionBuffer: WebGLBuffer;
+
+    /** Vertices position buffer */
+    private positionBuffer: WebGLBuffer;
 
     private vertexShaderSrc = `
     attribute vec2 aVertexPos;
@@ -11,14 +19,22 @@ export class GlEnviroment {
     }
     `;
 
+    /** Uniforms available for fragment shader use */
     readonly uniforms: string[] = [
         "uniform vec2 uResolution;"
     ];
 
+    /** Compiled vertex shader */
     private vertexShader: WebGLShader;
+    /** Compiled fragment shader */
     private fragmentShader?: WebGLShader;
+    /** Linked WebGL program */
     private program?: WebGLProgram;
 
+    /**
+     * Initialize WebGL context and buffers
+     * @param canvasId Id of HTML canvas
+     */
     constructor(canvasId: string) {
         this.canvas = document.getElementById(canvasId) as HTMLCanvasElement;
         let gl = this.canvas.getContext("webgl2");
@@ -44,6 +60,13 @@ export class GlEnviroment {
 
     }
 
+    /**
+     *  Compile a shader
+     * 
+     * @param type Shader type. It accepts `WebGLRenderingContextBase.VERTEX_SHADER` or `WebGLRenderingContextBase.FRAGMENT_SHADER`
+     * @param source Source code
+     * @returns Compiled WebGL shader
+     */
     private loadShader(type: number, source: string): WebGLShader {
         const shader = this.gl.createShader(type)!;
         this.gl.shaderSource(shader, source);
@@ -59,6 +82,11 @@ export class GlEnviroment {
         return shader;
     }
 
+    /**
+     * Link the compile shaders into a program. This program is stored on `this.program`.
+     * 
+     * The previous program, if exists, is disposed.
+     */
     private createProgram() {
         if (this.program)
             this.gl.deleteProgram(this.program);
@@ -76,6 +104,9 @@ export class GlEnviroment {
         }
     }
 
+    /**
+     * Draws on canvas using linked program
+     */
     render() {
         if (!this.program)
             throw Error("Program not loaded");
@@ -95,8 +126,13 @@ export class GlEnviroment {
         this.gl.drawArrays(this.gl.TRIANGLE_STRIP, 0, 4);
     }
 
+    /**
+     * Updates fragment shader and recompile the shader/program
+     * 
+     * @param fragShaderSrc New fragment shader source code
+     */
     refreshProgram(fragShaderSrc: string) {
-        console.log(fragShaderSrc)
+        // console.log(fragShaderSrc)
         this.fragmentShader = this.loadShader(this.gl.FRAGMENT_SHADER, fragShaderSrc);
         this.createProgram();
         this.render();
