@@ -12,7 +12,9 @@ export class ContextManager {
         active: ContextType.any,
         activeElement: null,
         hoverElement: null,
-        pointerPosition: new Vector2()
+        pointerPosition: new Vector2(),
+        hoverWidget: null,
+        activeWidget: null
     }
     get context(): ContextData {
         return { ...this._context };
@@ -33,16 +35,28 @@ export class ContextManager {
     updateContext(worldPointerPos: Vector2, rasterPointerPos: Vector2) {
         // console.log("updateContext")
         let layout = LayoutManager.getInstance().getLayout();
-        this._context.pointerPosition = worldPointerPos; 
+        this._context.pointerPosition = worldPointerPos;
 
-        // if (layout.ui) {
-        //     // TODO: something here 
-        // }
+        if (layout.activeWidget) {
+            this._context.activeWidget = layout.activeWidget;
+            if (this.isInside(rasterPointerPos, layout.activeWidget.topLeft, layout.activeWidget.bottomRight, true)) {
+                console.log("inside widget")
+                this._context.hover = ContextType.widget;
+                this._context.hoverElement = null;
+                this._context.hoverWidget = layout.activeWidget;
+                return
+            } else {
+                this._context.hoverWidget = layout.activeWidget;
+            }
+        } else {
+            this._context.activeWidget = null;
+
+        }
 
         if (layout.nodes) {
             for (let i = layout.nodes.length - 1; i >= 0; i--) {
                 const node = layout.nodes[i];
-                
+
 
                 for (const socket of node.socketLayouts.values()) {
                     if (this.isInside(worldPointerPos, socket.topLeft, socket.bottomRight)) {
@@ -52,8 +66,8 @@ export class ContextManager {
                         this._context.hoverElement = socket;
                         return;
                     }
-                    if(socket.input) {
-                        if(this.isInside(worldPointerPos, socket.input.position, socket.input.bottomRight)) {
+                    if (socket.input) {
+                        if (this.isInside(worldPointerPos, socket.input.position, socket.input.bottomRight)) {
                             this._context.hover = ContextType.input;
                             this._context.hoverElement = socket.input;
                             return;
@@ -78,10 +92,11 @@ export class ContextManager {
         this._context.active = this._context.hover;
     }
 
-    private isInside(pos: Vector2, topLeft: Vector2, bottomRight: Vector2): boolean {
-        // console.log(topLeft);
-        // console.log(pos);
-        // console.log(bottomRight);
-        return (pos.x >= topLeft.x) && (pos.x <= bottomRight.x) && (pos.y <= topLeft.y) && (pos.y >= bottomRight.y);
+    private isInside(pos: Vector2, topLeft: Vector2, bottomRight: Vector2, raster: boolean = false): boolean {
+        let tmp1 = (pos.x >= topLeft.x);
+        let tmp2 = (pos.x <= bottomRight.x);
+        let tmp3 = raster?(pos.y >= topLeft.y):(pos.y <= topLeft.y);
+        let tmp4 = raster?(pos.y <= bottomRight.y):(pos.y >= bottomRight.y);
+        return tmp1 && tmp2 && tmp3 && tmp4;
     }
 }

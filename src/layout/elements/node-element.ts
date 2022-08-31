@@ -1,6 +1,6 @@
 import { Vector2 } from "../../core/math/vector";
 import { BaseNode } from "../../node/definitions";
-import { LayoutElement } from "./base-elements";
+import { LayoutElement } from "./base-element";
 import { LayoutElementTypes } from "./element-types";
 import { SocketElement } from "./socket-element";
 

@@ -10,6 +10,7 @@ import { SocketType } from "../node/types/socket-types";
 import { ColorInputElement } from "../layout/elements/color-input-element";
 import { LayoutData } from "../layout/layout-data";
 import { ContextData } from "../context/context-data";
+import { BaseWidget, PivotTypes } from "../layout/widgets/base-widget";
 
 
 /**
@@ -24,6 +25,7 @@ export class Camera {
 
     bg: Canvas;
     board: Canvas;
+    ui: Canvas
 
     bgStyle: BgStyle;
     nodeStyle: NodeStyle;
@@ -42,7 +44,7 @@ export class Camera {
      * @param bgStyle Custom background style
      * @param nodeStyle Custom node style
      */
-    constructor(bg: Canvas, board: Canvas, position: Vector2 = new Vector2(0, 0), frustrumWidth: number = 10, zoom: number = 1, bgStyle: BgStyle = {}, nodeStyle: NodeStyle = {}) {
+    constructor(bg: Canvas, board: Canvas, ui: Canvas, position: Vector2 = new Vector2(0, 0), frustrumWidth: number = 10, zoom: number = 1, bgStyle: BgStyle = {}, nodeStyle: NodeStyle = {}) {
 
         this.position = position;
         this.frustrumWidth = frustrumWidth;
@@ -50,6 +52,7 @@ export class Camera {
 
         this.bg = bg;
         this.board = board;
+        this.ui = ui;
 
         this.aspectRatio = bg.element.width / bg.element.height;
 
@@ -286,6 +289,14 @@ export class Camera {
         }
     }
 
+    renderWidget(widget: BaseWidget) {
+
+        this.ui.context.fillStyle = this.nodeStyle.bgColor!;
+        this.ui.context.fillRect(widget.topLeft.x, widget.topLeft.y, widget.size.x, widget.size.y);
+
+
+    }
+
 
     /**
      * Draws semitransparent layout boxes. Used for debugging purposes
@@ -296,7 +307,7 @@ export class Camera {
         this.board.context.fillStyle = "#45bbffaa";
         for (const node of nodes) {
             let rasterPos = this.convertWorldCoordToRaster(node.position);
-            let rasterDim = new Vector2(this.realPixelSize(node.size.x),this.realPixelSize(node.size.y));
+            let rasterDim = new Vector2(this.realPixelSize(node.size.x), this.realPixelSize(node.size.y));
             this.board.context.fillRect(rasterPos.x, rasterPos.y, rasterDim.x, rasterDim.y);
         }
 
@@ -329,13 +340,21 @@ export class Camera {
         this.renderBackground();
         this.board.context.fillStyle = "#00000000";
         this.board.context.clearRect(0, 0, this.board.element.width, this.board.element.height);
+        
+        this.ui.context.fillStyle = "#00000000";
+        this.ui.context.clearRect(0, 0, this.ui.element.width, this.ui.element.height);
+
+        if (layout.activeWidget) {
+            this.renderWidget(layout.activeWidget);
+        }
+
 
         if (layout.connections) {
             this.renderConnections(layout.connections);
         }
         if (layout.nodes) {
             this.renderNodes(layout.nodes, context);
-            this.renderLayout(layout.nodes);
+            // this.renderLayout(layout.nodes);
         }
         if (layout.newConnection && context) {
             this.renderConnections([[layout.newConnection[0] ?? context.pointerPosition, layout.newConnection[1] ?? context.pointerPosition]])

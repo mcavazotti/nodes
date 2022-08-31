@@ -4,9 +4,10 @@ import { Vector2 } from '../core/math/vector';
 import { InputEventType } from '../input/input-events';
 import { InputHandler } from '../input/input-handler';
 import { MouseInputType } from '../input/input-types';
-import { LayoutElementTypes } from '../layout/elements/element-types';
+import { InputElement } from '../layout/elements/base-input-element';
 import { NodeElement, SocketElement } from '../layout/layout-elements';
 import { LayoutManager } from '../layout/layout-manager';
+import { PivotTypes } from '../layout/widgets/base-widget';
 import { NodeEngine } from '../node/node-engine';
 import { Socket } from '../node/types/socket';
 import { Camera } from '../render/camera'
@@ -29,21 +30,32 @@ export class UiHandler {
         this.engine = NodeEngine.getInstance();
 
         this.input.addEventListener(InputEventType.mousedown, (e, c) => {
+            // console.log(c)
             if (e.mouseButtonDown!.includes(MouseInputType.leftButton)) {
                 this.context.setActive();
-                if (this.context.context.active == ContextType.node) {
-                    this.layoutManager.moveNodeToFront(this.context.context.activeElement as NodeElement);
-                }
-                if (this.context.context.active == ContextType.socket) {
-                    let element = this.context.context.activeElement as SocketElement;
-                    if (element.socket.role == "input" && element.socket.conection) {
-                        this.connectSocket = this.layoutManager.getLayout().sockets.get(element.socket.conection[0])!.socket;
-                        this.engine.removeConnection(element.socket);
-                    } else {
-                        this.connectSocket = element.socket;
+                if (this.context.context.active == ContextType.input) {
+                    let inputElement = this.context.context.activeElement as InputElement<any>;
+                    this.layoutManager.setActiveWidget(inputElement.generateWidget(e.mouseRawPosition!, PivotTypes.undefined));
+                } else {
+
+                    if (this.layoutManager.getLayout().activeWidget && this.context.context.hover != ContextType.widget) {
+                        this.layoutManager.removeWidget();
                     }
-                    
-                    this.layoutManager.generateLayout(undefined, this.connectSocket.uId);
+
+                    if (this.context.context.active == ContextType.node) {
+                        this.layoutManager.moveNodeToFront(this.context.context.activeElement as NodeElement);
+                    }
+                    if (this.context.context.active == ContextType.socket) {
+                        let element = this.context.context.activeElement as SocketElement;
+                        if (element.socket.role == "input" && element.socket.conection) {
+                            this.connectSocket = this.layoutManager.getLayout().sockets.get(element.socket.conection[0])!.socket;
+                            this.engine.removeConnection(element.socket);
+                        } else {
+                            this.connectSocket = element.socket;
+                        }
+
+                        this.layoutManager.generateLayout(undefined, this.connectSocket.uId);
+                    }
                 }
                 this.mousePosition = e.mousePosition!;
             }
@@ -55,7 +67,7 @@ export class UiHandler {
                 if (c.hover == ContextType.socket) {
                     try {
                         this.engine.createConnection(this.connectSocket, (c.hoverElement as SocketElement).socket);
-                    } catch(e) {
+                    } catch (e) {
                         console.error(e)
                     }
                 }
@@ -69,7 +81,7 @@ export class UiHandler {
         this.input.addEventListener(InputEventType.mousemove, (e, c) => {
             // console.log(c);
             if (e.mouseButtonDown!.includes(MouseInputType.leftButton)) {
-                if (this.camera && !c.activeElement) {
+                if (this.camera && c.hover == ContextType.board) {
                     this.camera.position = this.camera.position.sub(e.mousePosition!.sub(this.mousePosition));
                 }
                 if (c.active == ContextType.node && c.activeElement) {
@@ -82,8 +94,8 @@ export class UiHandler {
 
         });
 
-        this.input.addEventListener(InputEventType.mousewheel, (e) => {
-            if (this.camera) {
+        this.input.addEventListener(InputEventType.mousewheel, (e,c) => {
+            if (this.camera && !c.activeWidget) {
                 switch (e.mouseScroll!) {
                     case MouseInputType.scrollUp:
                         this.camera.zoom = this.camera.zoom == 1 ? 1 : this.camera.zoom - 1;
@@ -92,7 +104,7 @@ export class UiHandler {
                         this.camera.zoom = this.camera.zoom == 20 ? 20 : this.camera.zoom + 1;
                         break;
                 }
-                this.translateCameraAfterZoom(e.mousePosition!,e.mouseRawPosition!);
+                this.translateCameraAfterZoom(e.mousePosition!, e.mouseRawPosition!);
             }
         });
     }
@@ -115,6 +127,6 @@ export class UiHandler {
         const newWorldPos = this.camera!.convertRasterCoordToWorld(cursorRawPos);
         const offset = newWorldPos.sub(cursorWorldPos);
 
-        this.camera!.position = this.camera!.position.sub(offset); 
+        this.camera!.position = this.camera!.position.sub(offset);
     }
 }

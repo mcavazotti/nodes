@@ -17,6 +17,8 @@ export class NodeEnviroment {
     private bg: Canvas;
     /** Layer used to render all the nodes and their connections */
     private board: Canvas;
+    /** Layer used to render UI elements */
+    private ui: Canvas;
     /** Layer used to capture user interactions. It should be on top of all of the other canvas elements */
     private input: Canvas;
     private camera: Camera;
@@ -34,19 +36,20 @@ export class NodeEnviroment {
      * @param uniforms Uniforms available for the shader
      * @param onCompile Callback for when the fragment shader source code is generated
      */
-    constructor(bg: Canvas, board: Canvas, input: Canvas, uniforms: string[], onCompile:((fs:string)=> void)) {
+    constructor(bg: Canvas, board: Canvas, ui: Canvas, input: Canvas, uniforms: string[], onCompile:((fs:string)=> void)) {
         this.inputHandler = InputHandler.getInstance();
         this.engine = NodeEngine.getInstance();
         this.engine.setListener(onCompile);
         this.engine.setUniforms(uniforms);
         this.bg = bg;
         this.board = board;
+        this.ui = ui;
         this.input = input;
         
         if (!(bg.element.width == board.element.width && bg.element.height == board.element.height))
         throw Error("Canvas elements must have the same size!");
         
-        this.camera = new Camera(this.bg, this.board);
+        this.camera = new Camera(this.bg, this.board, this.ui);
         this.layoutManager = LayoutManager.getInstance(this.camera);
         this.uiHandler = UiHandler.getInstance(this.camera);
         this.contextManager = ContextManager.getInstance();

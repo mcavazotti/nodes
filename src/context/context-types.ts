@@ -4,5 +4,6 @@ export enum ContextType {
     node = "node",
     socket = "socket",
     input= "input",
-    ui = "ui"
+    ui = "ui",
+    widget = "widget",
 }

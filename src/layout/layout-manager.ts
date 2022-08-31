@@ -9,6 +9,7 @@ import { ColorInputElement } from "./elements/color-input-element";
 import { LayoutElementTypes } from "./elements/element-types";
 import { LayoutData } from "./layout-data";
 import { NodeElement, SocketElement } from "./layout-elements";
+import { BaseWidget, PivotTypes } from "./widgets/base-widget";
 
 
 
@@ -21,9 +22,10 @@ export class LayoutManager {
     private canvas: Canvas;
 
     private nodeElements: NodeElement[] = [];
-    private socketElements: Map<string,SocketElement> = new Map();
+    private socketElements: Map<string, SocketElement> = new Map();
     private connections: [Vector2, Vector2][] = [];
     private newConnection: [Vector2 | null, Vector2 | null] | null = null;
+    private activeWidget: BaseWidget | null = null;
 
     private constructor() {
         let canvasElement = document.createElement("canvas");
@@ -51,7 +53,7 @@ export class LayoutManager {
             connections: this.connections,
             newConnection: this.newConnection,
             sockets: this.socketElements,
-
+            activeWidget: this.activeWidget,
             // ui: [],
         };
     }
@@ -66,6 +68,31 @@ export class LayoutManager {
     }
     setActiveCamera(camera: Camera) {
         this.activeCamera = camera;
+    }
+
+    setActiveWidget(widget: BaseWidget) {
+        let pivotLeft = widget.size.x + widget.position.x <= this.activeCamera!.ui.element.width;
+        let pivotTop = widget.size.y + widget.position.y <= this.activeCamera!.ui.element.height;
+        
+        if(pivotLeft && pivotTop) {
+            widget.pivot = PivotTypes.topLeft;
+        }
+        if(pivotLeft && !pivotTop) {
+            widget.pivot = PivotTypes.bottomLeft;
+        }
+        if(!pivotLeft && pivotTop) {
+            widget.pivot = PivotTypes.topRight;
+        }
+        if(!pivotLeft && !pivotTop) {
+            widget.pivot = PivotTypes.bottomRight;
+        }
+        
+        this.activeWidget = widget;
+    }
+
+    removeWidget() {
+        this.activeWidget?.close();
+        this.activeWidget = null;
     }
 
     generateLayout(nodes?: BaseNode[], newConnectionOrigin: string | null = null) {
