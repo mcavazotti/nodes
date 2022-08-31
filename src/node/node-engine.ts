@@ -1,4 +1,4 @@
-import { compileShader } from "../compiler/shader-compiler";
+import { CompilationData, compileShader, transverseNodes } from "../compiler/shader-compiler";
 import { Vector2 } from "../core/math/vector";
 import { BaseNode, CoordinateNode, OutputNode, SeparateXYNode } from "./definitions";
 import { Socket } from "./types/socket";
@@ -75,6 +75,15 @@ export class NodeEngine {
         // TODO: check socket types
         input.conection = [output.uId!, output.type];
         try{
+            let data: CompilationData = {
+                definitions: new Map(),
+                visitedNode: new Set(),
+                visiting: new Set(),
+                mainCode: ""
+            };
+            let id = output.uId!.match(/.*(?=-o-)/)![0];
+            let node = this._nodes.get(id)!;
+            transverseNodes(node,this._nodes, data);
             this.compile();
         }catch(e) {
             input.conection = null;

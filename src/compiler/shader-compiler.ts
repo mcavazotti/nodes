@@ -37,7 +37,7 @@ function compileShader(nodes: Map<string, BaseNode>, outputId: string, uniforms:
 }
 
 function transverseNodes(node: BaseNode, nodes: Map<string, BaseNode>, compilationData: CompilationData) {
-    console.log(node.label)
+    // console.log(node.label)
     if (compilationData.visitedNode.has(node.uId))
         return;
 
@@ -63,4 +63,4 @@ function getNodeIdFromSocketId(id: string): string {
     return id.match(/(n-\d{4})/)![0];
 }
 
-export { compileShader };
+export { compileShader, transverseNodes,CompilationData };
