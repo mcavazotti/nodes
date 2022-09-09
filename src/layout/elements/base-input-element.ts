@@ -5,13 +5,13 @@ import { LayoutElementTypes } from "./element-types";
 import { SocketElement } from "./socket-element";
 
 export abstract class InputElement<T> extends LayoutElement {
-    private _value: T;
+
     private onChange: (val: T) => void;
     get value(): T {
-        return this._value;
+        return (this.parent.socket as Socket<T>).value!;
     }
     set value(v: T) {
-        this._value = v;
+        (this.parent.socket as Socket<T>).value = v;
         this.onChange(v);
     }
 
@@ -20,7 +20,6 @@ export abstract class InputElement<T> extends LayoutElement {
     constructor(parent: SocketElement, position: Vector2, size: Vector2, bottomRight: Vector2, id: string, type: LayoutElementTypes, onChange: (val: T) => void) {
         super(position, size, bottomRight, id, type);
         this.parent = parent;
-        this._value = (parent.socket as Socket<T>).value!;
         this.onChange = onChange;
     }
 }

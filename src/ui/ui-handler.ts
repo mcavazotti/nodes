@@ -1,14 +1,17 @@
 import { ContextManager } from '../context/context-manager';
 import { ContextType } from '../context/context-types';
-import { Vector2 } from '../core/math/vector';
+import { ColorRGBA } from '../core/color/color';
+import { Vector2, Vector3 } from '../core/math/vector';
 import { InputEventType } from '../input/input-events';
 import { InputHandler } from '../input/input-handler';
 import { MouseInputType } from '../input/input-types';
+import { InputElement } from '../layout/elements/base-input-element';
 import { LayoutElementTypes } from '../layout/elements/element-types';
 import { NodeElement, SocketElement } from '../layout/layout-elements';
 import { LayoutManager } from '../layout/layout-manager';
 import { NodeEngine } from '../node/node-engine';
 import { Socket } from '../node/types/socket';
+import { SocketType } from '../node/types/socket-types';
 import { Camera } from '../render/camera'
 
 export class UiHandler {
@@ -30,6 +33,7 @@ export class UiHandler {
 
         this.input.addEventListener(InputEventType.mousedown, (e, c) => {
             if (e.mouseButtonDown!.includes(MouseInputType.leftButton)) {
+                console.log(c)
                 this.context.setActive();
                 if (this.context.context.active == ContextType.node) {
                     this.layoutManager.moveNodeToFront(this.context.context.activeElement as NodeElement);
@@ -42,7 +46,7 @@ export class UiHandler {
                     } else {
                         this.connectSocket = element.socket;
                     }
-                    
+
                     this.layoutManager.generateLayout(undefined, this.connectSocket.uId);
                 }
                 this.mousePosition = e.mousePosition!;
@@ -55,14 +59,23 @@ export class UiHandler {
                 if (c.hover == ContextType.socket) {
                     try {
                         this.engine.createConnection(this.connectSocket, (c.hoverElement as SocketElement).socket);
-                    } catch(e) {
+                    } catch (e) {
                         console.error(e)
                     }
                 }
                 this.connectSocket = null;
                 this.layoutManager.generateLayout();
-            }
+            } else {
+                if (c.hover == ContextType.input) {
+                    let value: string | null = window.prompt("Insert value:");
+                    if (value !== null) {
+                        this.setInputValue(value, (c.hoverElement as InputElement<any>));
+                        this.camera!.render(this.layoutManager.getLayout(),c);
+                        this.engine.compile();
+                    }
 
+                }
+            }
 
         });
 
@@ -92,7 +105,7 @@ export class UiHandler {
                         this.camera.zoom = this.camera.zoom == 20 ? 20 : this.camera.zoom + 1;
                         break;
                 }
-                this.translateCameraAfterZoom(e.mousePosition!,e.mouseRawPosition!);
+                this.translateCameraAfterZoom(e.mousePosition!, e.mouseRawPosition!);
             }
         });
     }
@@ -115,6 +128,66 @@ export class UiHandler {
         const newWorldPos = this.camera!.convertRasterCoordToWorld(cursorRawPos);
         const offset = newWorldPos.sub(cursorWorldPos);
 
-        this.camera!.position = this.camera!.position.sub(offset); 
+        this.camera!.position = this.camera!.position.sub(offset);
+    }
+
+    private setInputValue(value: string, input: InputElement<any>) {
+        switch (input.parent.socket.type) {
+            case SocketType.bool:
+                switch (value.toLowerCase().trim()) {
+                    case 'true':
+                        input.value = true;
+                        break;
+                    case 'false':
+                        input.value = false;
+                        break;
+                    default:
+                        throw Error(`Invalid input value: ${value}`);
+                }
+                break;
+            case SocketType.float:
+                input.value = Number.parseFloat(value);
+                break;
+            case SocketType.vector2:
+                {
+                    let regex: RegExp = /^\((?<x>[-+]?[0-9]*\.?[0-9]+),(?<y>[-+]?[0-9]*\.?[0-9]+)\)$/g;
+                    let matches = [...value.matchAll(regex)];
+                    if (matches.length != 1)
+                        throw Error(`Invalid input value: ${value}`);
+                    let x: number = Number.parseFloat(matches[0].groups!.x);
+                    let y: number = Number.parseFloat(matches[0].groups!.y);
+                    input.value = new Vector2(x, y);
+                }
+                break;
+            case SocketType.vector3:
+                {
+                    let regex: RegExp = /^\((?<x>[-+]?[0-9]*\.?[0-9]+),(?<y>[-+]?[0-9]*\.?[0-9]+),(?<z>[-+]?[0-9]*\.?[0-9]+)\)$/g;
+                    let matches = [...value.matchAll(regex)];
+                    if (matches.length != 1)
+                        throw Error(`Invalid input value: ${value}`);
+                    let x: number = Number.parseFloat(matches[0].groups!.x);
+                    let y: number = Number.parseFloat(matches[0].groups!.y);
+                    let z: number = Number.parseFloat(matches[0].groups!.z);
+                    input.value = new Vector3(x, y, z);
+                }
+                break;
+            case SocketType.color:
+                {
+                    let regex: RegExp = /^\((?<r>[-+]?[0-9]*\.?[0-9]+),(?<g>[-+]?[0-9]*\.?[0-9]+),(?<b>[-+]?[0-9]*\.?[0-9]+)(,(?<a>[-+]?[0-9]*\.?[0-9]+))?\)$/g;
+                    let matches = [...value.matchAll(regex)];
+                    if (matches.length == 1) {
+                        let r: number = Number.parseFloat(matches[0].groups!.r);
+                        let g: number = Number.parseFloat(matches[0].groups!.g);
+                        let b: number = Number.parseFloat(matches[0].groups!.b);
+                        let a: number = Number.parseFloat(matches[0].groups!.a);
+                        input.value = new ColorRGBA(r, g, b, a);
+                    }
+                    else {
+                        if (matches.length > 1)
+                            throw Error(`Invalid input value: ${value}`);
+                        input.value = new ColorRGBA(value);
+                    }
+                }
+        }
     }
 }

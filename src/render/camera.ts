@@ -335,7 +335,7 @@ export class Camera {
         }
         if (layout.nodes) {
             this.renderNodes(layout.nodes, context);
-            this.renderLayout(layout.nodes);
+            // this.renderLayout(layout.nodes);
         }
         if (layout.newConnection && context) {
             this.renderConnections([[layout.newConnection[0] ?? context.pointerPosition, layout.newConnection[1] ?? context.pointerPosition]])
