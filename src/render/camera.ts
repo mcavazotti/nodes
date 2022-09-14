@@ -1,5 +1,5 @@
 import { Canvas } from "../core/html-interface/canvas";
-import { Vector2 } from "../core/math/vector";
+import { Vector, Vector2 } from "../core/math/vector";
 import { BgStyle, DefaultBgStyle } from "./styles/bg-style";
 import { DefaultNodeStyle, NodeStyle } from "./styles/node-style";
 import * as primitives from "./primitives"
@@ -10,6 +10,8 @@ import { SocketType } from "../node/types/socket-types";
 import { ColorInputElement } from "../layout/elements/color-input-element";
 import { LayoutData } from "../layout/layout-data";
 import { ContextData } from "../context/context-data";
+import { VectorInputElement } from "../layout/elements/vector-input-element";
+import { NumberInputElement } from "../layout/elements/number-input-element";
 
 
 /**
@@ -278,9 +280,73 @@ export class Camera {
                 let rasterDim = new Vector2(this.realPixelSize(colorInput.size.x), this.realPixelSize(colorInput.size.y));
                 this.board.context.fillRect(rasterPos.x, rasterPos.y, rasterDim.x, rasterDim.y);
 
-                this.board.context.strokeStyle = this.nodeStyle.borderStyle!;
+                this.board.context.strokeStyle = this.nodeStyle.innerBorderStyle!;
                 this.board.context.lineWidth = this.nodeStyle.borderThickness!;
                 this.board.context.strokeRect(rasterPos.x, rasterPos.y, rasterDim.x, rasterDim.y);
+            }
+                break;
+            case SocketType.float: {
+                let numberInput = input as NumberInputElement;
+                this.board.context.strokeStyle = this.nodeStyle.innerBorderStyle!;
+                this.board.context.lineWidth = this.nodeStyle.borderThickness!;
+
+                let rasterPos = this.convertWorldCoordToRaster(numberInput.position);
+                let rasterDim = new Vector2(this.realPixelSize(numberInput.size.x), this.realPixelSize(numberInput.size.y));
+
+                this.board.context.fillStyle = this.nodeStyle.innerBgColor!;
+                this.board.context.fillRect(rasterPos.x, rasterPos.y, rasterDim.x, rasterDim.y);
+                this.board.context.strokeRect(rasterPos.x, rasterPos.y, rasterDim.x, rasterDim.y);
+
+                this.board.context.font = `normal ${this.realPixelSize(this.nodeStyle.fontSize! * 0.8)}px ${this.nodeStyle.fontFace!}`;
+                this.board.context.textBaseline = "middle";
+                this.board.context.fillStyle = this.nodeStyle.fontColor!;
+                this.board.context.textAlign = "center";
+
+                
+                let rasterNumberPos = new Vector2(rasterPos.x + rasterDim.x / 2, rasterPos.y + rasterDim.y /  2);
+                
+                let value = numberInput.parent.socket.value!;
+                this.board.context.fillText(value.toString(), rasterNumberPos.x, rasterNumberPos.y);
+            }
+            case SocketType.vector2:
+            case SocketType.vector3:
+            case SocketType.vector4: {
+                let vectorInput = input as VectorInputElement<Vector>;
+                this.board.context.strokeStyle = this.nodeStyle.innerBorderStyle!;
+                this.board.context.lineWidth = this.nodeStyle.borderThickness!;
+
+                let rasterPos = this.convertWorldCoordToRaster(vectorInput.position);
+                let rasterDim = new Vector2(this.realPixelSize(vectorInput.size.x), this.realPixelSize(vectorInput.size.y));
+
+                this.board.context.fillStyle = this.nodeStyle.innerBgColor!;
+                this.board.context.fillRect(rasterPos.x, rasterPos.y, rasterDim.x, rasterDim.y);
+
+                this.board.context.beginPath();
+                this.board.context.moveTo(rasterPos.x, rasterPos.y);
+                this.board.context.lineTo(rasterPos.x + rasterDim.x, rasterPos.y);
+                this.board.context.lineTo(rasterPos.x + rasterDim.x, rasterPos.y + rasterDim.y);
+                this.board.context.lineTo(rasterPos.x, rasterPos.y + rasterDim.y);
+                this.board.context.closePath();
+
+                for (let i = 0; i < vectorInput.value.size; i++) {
+                    this.board.context.moveTo(rasterPos.x, rasterPos.y + (rasterDim.y / vectorInput.value.size) * i);
+                    this.board.context.lineTo(rasterPos.x + rasterDim.x, rasterPos.y + (rasterDim.y / vectorInput.value.size) * i);
+                }
+                this.board.context.stroke();
+
+                this.board.context.font = `normal ${this.realPixelSize(this.nodeStyle.fontSize! * 0.8)}px ${this.nodeStyle.fontFace!}`;
+                this.board.context.textBaseline = "middle";
+                this.board.context.fillStyle = this.nodeStyle.fontColor!;
+                this.board.context.textAlign = "center";
+
+                for (let i = 0; i < vectorInput.value.size; i++) {
+                    let value = vectorInput.value.v[i];
+                    let rasterNumberPos = new Vector2(rasterPos.x + rasterDim.x / 2, rasterPos.y + (rasterDim.y / (vectorInput.value.size * 2)) * (i * 2 + 1));
+
+                    this.board.context.fillText(value.toString(), rasterNumberPos.x, rasterNumberPos.y);
+                }
+
+
             }
                 break;
         }
@@ -296,7 +362,7 @@ export class Camera {
         this.board.context.fillStyle = "#45bbffaa";
         for (const node of nodes) {
             let rasterPos = this.convertWorldCoordToRaster(node.position);
-            let rasterDim = new Vector2(this.realPixelSize(node.size.x),this.realPixelSize(node.size.y));
+            let rasterDim = new Vector2(this.realPixelSize(node.size.x), this.realPixelSize(node.size.y));
             this.board.context.fillRect(rasterPos.x, rasterPos.y, rasterDim.x, rasterDim.y);
         }
 

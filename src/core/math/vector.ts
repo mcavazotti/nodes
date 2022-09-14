@@ -1,6 +1,27 @@
-class Vector2 {
-    x: number;
-    y: number;
+abstract class Vector {
+    v: Array<number>;
+    readonly size: number;
+    protected constructor(size: number) {
+        this.size = size;
+        this.v = new Array<number>(size);
+        this.v.fill(0);
+    }
+}
+
+class Vector2 extends Vector {
+    get x(): number {
+        return this.v[0];
+    }
+    set x(val: number) {
+        this.v[0] = val;
+    }
+
+    get y(): number {
+        return this.v[1];
+    }
+    set y(val: number) {
+        this.v[1] = val;
+    }
 
 
     get length(): number {
@@ -11,6 +32,7 @@ class Vector2 {
 
 
     constructor(x?: number, y?: number) {
+        super(2);
         this.x = x ?? 0;
         this.y = y ?? 0;
     }
@@ -56,10 +78,27 @@ class Vector2 {
     }
 }
 
-class Vector3 {
-    x: number;
-    y: number;
-    z: number;
+class Vector3 extends Vector {
+    get x(): number {
+        return this.v[0];
+    }
+    set x(val: number) {
+        this.v[0] = val;
+    }
+
+    get y(): number {
+        return this.v[1];
+    }
+    set y(val: number) {
+        this.v[1] = val;
+    }
+
+    get z(): number {
+        return this.v[2];
+    }
+    set z(val: number) {
+        this.v[2] = val;
+    }
 
 
     get length(): number {
@@ -70,6 +109,7 @@ class Vector3 {
 
 
     constructor(x?: number, y?: number, z?: number) {
+        super(3);
         this.x = x ?? 0;
         this.y = y ?? 0;
         this.z = z ?? 0;
@@ -124,11 +164,34 @@ class Vector3 {
     }
 }
 
-class Vector4 {
-    x: number;
-    y: number;
-    z: number;
-    w: number;
+class Vector4 extends Vector {
+    get x(): number {
+        return this.v[0];
+    }
+    set x(val: number) {
+        this.v[0] = val;
+    }
+
+    get y(): number {
+        return this.v[1];
+    }
+    set y(val: number) {
+        this.v[1] = val;
+    }
+
+    get z(): number {
+        return this.v[2];
+    }
+    set z(val: number) {
+        this.v[2] = val;
+    }
+
+    get w(): number {
+        return this.v[3];
+    }
+    set w(val: number) {
+        this.v[3] = val;
+    }
 
 
     get length(): number {
@@ -139,6 +202,7 @@ class Vector4 {
 
 
     constructor(x?: number, y?: number, z?: number, w?: number) {
+        super(4)
         this.x = x ?? 0;
         this.y = y ?? 0;
         this.z = z ?? 0;
@@ -187,4 +251,4 @@ class Vector4 {
         return `(${this.x}, ${this.y}, ${this.z}, ${this.w})`
     }
 }
-export { Vector2, Vector3, Vector4 };
+export { Vector, Vector2, Vector3, Vector4 };

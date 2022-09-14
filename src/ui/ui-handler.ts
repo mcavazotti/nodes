@@ -67,10 +67,31 @@ export class UiHandler {
                 this.layoutManager.generateLayout();
             } else {
                 if (c.hover == ContextType.input) {
-                    let value: string | null = window.prompt("Insert value:");
+                    let prompt = "Insert";
+                    switch ((c.hoverElement as InputElement<any>).parent.socket.type) {
+                        case SocketType.bool:
+                            prompt += " boolean value: \n<\"true\" | \"false\">";
+                            break;
+                        case SocketType.float:
+                            prompt += " numerical value: \n<number>";
+                            break;
+                        case SocketType.vector2:
+                            prompt += " vector value: \n<format: \"(x,y)\">";
+                            break;
+                        case SocketType.vector3:
+                            prompt += " vector value: \n<format: \"(x,y,z)\">";
+                            break;
+                        case SocketType.vector4:
+                            prompt += " vector value: \n<format: \"(x,y,z,w)\">";
+                            break;
+                        case SocketType.color:
+                            prompt += " color value: \n<format: HTML color code (hex or name) OR \"(r,g,b,a)\">";
+                            break;
+                    }
+                    let value: string | null = window.prompt(prompt);
                     if (value !== null) {
                         this.setInputValue(value, (c.hoverElement as InputElement<any>));
-                        this.camera!.render(this.layoutManager.getLayout(),c);
+                        this.camera!.render(this.layoutManager.getLayout(), c);
                         this.engine.compile();
                     }
 

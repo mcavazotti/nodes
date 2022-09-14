@@ -6,7 +6,9 @@ import { SocketType } from "../../node/types/socket-types";
  */
 interface NodeStyle {
     bgColor?: string;
+    innerBgColor?: string;
     borderStyle?: string;
+    innerBorderStyle?: string;
     fontFace?: string;
     fontSize?: number;
     fontColor?: string;
@@ -22,14 +24,24 @@ interface NodeStyle {
 
 const DefaultNodeStyle: NodeStyle = {
     bgColor: "#848484",
+    innerBgColor: "#a5a584",
     borderStyle: "#000",
+    innerBorderStyle: "#333",
     fontFace: "Arial",
     fontSize: 16,
     fontColor: "white",
     textMargin: 3,
     borderThickness: 1,
-    headerColors: new Map([[NodeClass.output, "tomato"], [NodeClass.input,"blueviolet" ]]),
-    socketColors: new Map([[SocketType.color, "cyan"],[SocketType.vector2,"red"]]),
+    headerColors: new Map([
+        [NodeClass.output, "tomato"], 
+        [NodeClass.input,"blueviolet" ],
+        [NodeClass.transform,"darkgreen" ],
+    ]),
+    socketColors: new Map([
+        [SocketType.color, "cyan"],
+        [SocketType.vector2,"red"],
+        [SocketType.float,"orange"],
+    ]),
     socketRadius: 5,
     connectionColor: "#ffffff",
     connectionThickness: 3,

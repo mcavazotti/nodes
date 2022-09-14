@@ -1,5 +1,5 @@
 import { Canvas } from "../core/html-interface/canvas";
-import { Vector2 } from "../core/math/vector";
+import { Vector2, Vector3, Vector4 } from "../core/math/vector";
 import { BaseNode } from "../node/definitions";
 import { NodeEngine } from "../node/node-engine";
 import { SocketType } from "../node/types/socket-types";
@@ -7,6 +7,8 @@ import { Camera } from "../render/camera";
 import { InputElement } from "./elements/base-input-element";
 import { ColorInputElement } from "./elements/color-input-element";
 import { LayoutElementTypes } from "./elements/element-types";
+import { NumberInputElement } from "./elements/number-input-element";
+import { VectorInputElement } from "./elements/vector-input-element";
 import { LayoutData } from "./layout-data";
 import { NodeElement, SocketElement } from "./layout-elements";
 
@@ -21,7 +23,7 @@ export class LayoutManager {
     private canvas: Canvas;
 
     private nodeElements: NodeElement[] = [];
-    private socketElements: Map<string,SocketElement> = new Map();
+    private socketElements: Map<string, SocketElement> = new Map();
     private connections: [Vector2, Vector2][] = [];
     private newConnection: [Vector2 | null, Vector2 | null] | null = null;
 
@@ -202,22 +204,78 @@ export class LayoutManager {
     }
 
     private generateInputLayout(element: SocketElement, offset: number, textHeight: number): [InputElement<any>, number] {
+        let pos = element.parent.position.add(new Vector2(this.activeCamera!.convertPixelToUnit(this.activeCamera!.nodeStyle.textMargin! + this.activeCamera!.nodeStyle.socketRadius!, true), - this.activeCamera!.convertPixelToUnit(offset, true)));
         switch (element.socket.type) {
             case SocketType.color:
-            case SocketType.vector2:
-                let pos = element.parent.position.add(new Vector2(this.activeCamera!.convertPixelToUnit(this.activeCamera!.nodeStyle.textMargin! + this.activeCamera!.nodeStyle.socketRadius!, true), - this.activeCamera!.convertPixelToUnit(offset, true)));
-                let colorInput = new ColorInputElement(
-                    element,
-                    pos,
-                    new Vector2(30, 20),
-                    pos.add(new Vector2(this.activeCamera!.convertPixelToUnit(30, true), -this.activeCamera!.convertPixelToUnit(20, true))),
-                    (c) => {
-                        // TODO
-                    }
-                );
+                {
+                    let colorInput = new ColorInputElement(
+                        element,
+                        pos,
+                        new Vector2(30, 20),
+                        pos.add(new Vector2(this.activeCamera!.convertPixelToUnit(30, true), -this.activeCamera!.convertPixelToUnit(20, true))),
+                        (c) => {
+                            // TODO
+                        }
+                    );
 
-                return [colorInput, offset + colorInput.size.y + textHeight];
-                break;
+                    return [colorInput, offset + colorInput.size.y + textHeight];
+                }
+            case SocketType.float:
+                {
+                    let vectorInput = new NumberInputElement(
+                        element,
+                        pos,
+                        new Vector2(50, (textHeight * 0.8 + 5)),
+                        pos.add(new Vector2(this.activeCamera!.convertPixelToUnit(50, true), -this.activeCamera!.convertPixelToUnit((textHeight * 0.8 + 5), true))),
+                        (v) => {
+                            // TODO
+
+                        }
+                    );
+                    return [vectorInput, offset + vectorInput.size.y + textHeight];
+                }
+            case SocketType.vector2:
+                {
+                    let vectorInput = new VectorInputElement<Vector2>(
+                        element,
+                        pos,
+                        new Vector2(50, (textHeight * 0.8 + 5) * 2),
+                        pos.add(new Vector2(this.activeCamera!.convertPixelToUnit(50, true), -this.activeCamera!.convertPixelToUnit((textHeight * 0.8 + 5) * 2, true))),
+                        (v) => {
+                            // TODO
+
+                        }
+                    );
+                    return [vectorInput, offset + vectorInput.size.y + textHeight];
+                }
+            case SocketType.vector3:
+                {
+                    let vectorInput = new VectorInputElement<Vector3>(
+                        element,
+                        pos,
+                        new Vector2(50, (textHeight * 0.8 + 5) * 3),
+                        pos.add(new Vector2(this.activeCamera!.convertPixelToUnit(50, true), -this.activeCamera!.convertPixelToUnit((textHeight * 0.8 + 5) * 3, true))),
+                        (v) => {
+                            // TODO
+
+                        }
+                    );
+                    return [vectorInput, offset + vectorInput.size.y + textHeight];
+                }
+            case SocketType.vector4:
+                {
+                    let vectorInput = new VectorInputElement<Vector4>(
+                        element,
+                        pos,
+                        new Vector2(50, (textHeight * 0.8 + 5) * 4),
+                        pos.add(new Vector2(this.activeCamera!.convertPixelToUnit(50, true), -this.activeCamera!.convertPixelToUnit((textHeight * 0.8 + 5) * 4, true))),
+                        (v) => {
+                            // TODO
+
+                        }
+                    );
+                    return [vectorInput, offset + vectorInput.size.y + textHeight];
+                }
             default:
                 throw Error(`Unkown socket type: ${element.socket.type} `)
         }
