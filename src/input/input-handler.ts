@@ -23,7 +23,8 @@ export class InputHandler {
             mousePosition: new Vector2(),
             mouseMovement: new Vector2(),
             mouseButtonDown: [],
-            mouseScroll: null
+            mouseScroll: null,
+            keysDown: new Set()
         };
         this.context = ContextManager.getInstance();
     }
@@ -93,5 +94,14 @@ export class InputHandler {
                     break;
             }
         }
+    }
+
+    public keyDown(key: string) {
+        this.inputState.keysDown!.add(key);
+        this.fireEvent(InputEventType.keyDown, { ...this.inputState })
+    }
+    public keyUp(key: string) {
+        this.inputState.keysDown!.delete(key);
+        this.fireEvent(InputEventType.keyUp, { ...this.inputState, keyUp: key })
     }
 }

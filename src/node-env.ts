@@ -7,6 +7,7 @@ import { NodeEngine } from "./node/node-engine";
 import { LayoutManager } from "./layout/layout-manager";
 import { UiHandler } from "./ui/ui-handler";
 import { ContextManager } from "./context/context-manager";
+import { CombineXYNode, CombineXYZNode, CoordinateNode, SeparateXYNode, SeparateXYZNode } from "./node/definitions";
 
 
 /**
@@ -34,7 +35,7 @@ export class NodeEnviroment {
      * @param uniforms Uniforms available for the shader
      * @param onCompile Callback for when the fragment shader source code is generated
      */
-    constructor(bg: Canvas, board: Canvas, input: Canvas, uniforms: string[], onCompile:((fs:string)=> void)) {
+    constructor(bg: Canvas, board: Canvas, input: Canvas, uniforms: string[], onCompile: ((fs: string) => void)) {
         this.inputHandler = InputHandler.getInstance();
         this.engine = NodeEngine.getInstance();
         this.engine.setListener(onCompile);
@@ -42,10 +43,10 @@ export class NodeEnviroment {
         this.bg = bg;
         this.board = board;
         this.input = input;
-        
+
         if (!(bg.element.width == board.element.width && bg.element.height == board.element.height))
-        throw Error("Canvas elements must have the same size!");
-        
+            throw Error("Canvas elements must have the same size!");
+
         this.camera = new Camera(this.bg, this.board);
         this.layoutManager = LayoutManager.getInstance(this.camera);
         this.uiHandler = UiHandler.getInstance(this.camera);
@@ -64,7 +65,7 @@ export class NodeEnviroment {
      */
     start() {
         this.layoutManager.generateLayout(this.engine.nodes);
-        this.camera.render(this.layoutManager.getLayout(),this.contextManager.context );
+        this.camera.render(this.layoutManager.getLayout(), this.contextManager.context);
 
         this.input.element.addEventListener("contextmenu", (event) => {
             event.preventDefault();
@@ -76,7 +77,7 @@ export class NodeEnviroment {
             let transformedVec = this.camera.convertRasterCoordToWorld(vec);
 
             this.inputHandler.setState({ mousePosition: transformedVec, mouseRawPosition: vec });
-            this.camera.render(this.layoutManager.getLayout(), this.contextManager.context);
+            // this.camera.render(this.layoutManager.getLayout(), this.contextManager.context);
         });
 
         this.input.element.addEventListener("mousedown", (event) => {
@@ -97,9 +98,9 @@ export class NodeEnviroment {
                 default:
                     break;
             }
-            if (mouseButton != null){
+            if (mouseButton != null) {
                 this.inputHandler.setState({ mouseButtonDown: [mouseButton] })
-                this.camera.render(this.layoutManager.getLayout(), this.contextManager.context);   
+                this.camera.render(this.layoutManager.getLayout(), this.contextManager.context);
             }
         });
 
@@ -126,11 +127,51 @@ export class NodeEnviroment {
         });
 
         this.input.element.addEventListener("wheel", (event) => {
-            let wheelDirection = event.deltaY < 0 ? MouseInputType.scrollUp: MouseInputType.scrollDown;
-            this.inputHandler.setState({mouseScroll: wheelDirection});
+            let wheelDirection = event.deltaY < 0 ? MouseInputType.scrollUp : MouseInputType.scrollDown;
+            this.inputHandler.setState({ mouseScroll: wheelDirection });
 
             this.camera.render(this.layoutManager.getLayout(), this.contextManager.context);
 
+        });
+
+        this.input.element.addEventListener('keydown', (event) => {
+            this.inputHandler.keyDown(event.code);
+        });
+
+        this.input.element.addEventListener('keyup', (event) => {
+            this.inputHandler.keyUp(event.code);
+        });
+
+        this.bindButtons();
+    }
+
+    // temporary method
+    // GAMBIARRA!
+    private bindButtons() {
+        document.getElementById('n-coordinates')?.addEventListener('click', () => {
+            this.engine.createNode(new CoordinateNode(new Vector2()));
+            this.layoutManager.generateLayout();
+            this.camera.render(this.layoutManager.getLayout(), this.contextManager.context);
+        });
+        document.getElementById('n-separate-x-y')?.addEventListener('click', () => {
+            this.engine.createNode(new SeparateXYNode(new Vector2()));
+            this.layoutManager.generateLayout();
+            this.camera.render(this.layoutManager.getLayout(), this.contextManager.context);
+        });
+        document.getElementById('n-combine-x-y')?.addEventListener('click', () => {
+            this.engine.createNode(new CombineXYNode(new Vector2()));
+            this.layoutManager.generateLayout();
+            this.camera.render(this.layoutManager.getLayout(), this.contextManager.context);
+        });
+        document.getElementById('n-separate-x-y-z')?.addEventListener('click', () => {
+            this.engine.createNode(new SeparateXYZNode(new Vector2()));
+            this.layoutManager.generateLayout();
+            this.camera.render(this.layoutManager.getLayout(), this.contextManager.context);
+        });
+        document.getElementById('n-combine-x-y-z')?.addEventListener('click', () => {
+            this.engine.createNode(new CombineXYZNode(new Vector2()));
+            this.layoutManager.generateLayout();
+            this.camera.render(this.layoutManager.getLayout(), this.contextManager.context);
         });
     }
 

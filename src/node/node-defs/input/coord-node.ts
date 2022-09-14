@@ -1,9 +1,9 @@
-import { ColorRGBA } from "../../core/color/color";
-import { Vector2 } from "../../core/math/vector";
-import { NodeClass } from "../types/node-classes";
-import { SocketType } from "../types/socket-types";
-import { BaseNode } from "./base-node";
-import { getVariableNameForSocket } from "./node-code-helpers";
+import { ColorRGBA } from "../../../core/color/color";
+import { Vector2 } from "../../../core/math/vector";
+import { NodeClass } from "../../types/node-classes";
+import { SocketType } from "../../types/socket-types";
+import { BaseNode } from "../base-node";
+import { getVariableNameForSocket } from "../node-code-helpers";
 
 export class CoordinateNode extends BaseNode {
     

@@ -1,9 +1,9 @@
-import { Vector2 } from "../../core/math/vector";
-import { NodeClass } from "../types/node-classes";
-import { Socket } from "../types/socket";
-import { SocketType } from "../types/socket-types";
-import { BaseNode } from "./base-node";
-import { convertSocketTypes, getVariableNameForSocket } from "./node-code-helpers";
+import { Vector2 } from "../../../core/math/vector";
+import { NodeClass } from "../../types/node-classes";
+import { Socket } from "../../types/socket";
+import { SocketType } from "../../types/socket-types";
+import { BaseNode } from "../base-node";
+import { convertSocketTypes, getVariableNameForSocket } from "../node-code-helpers";
 
 export class SeparateXYNode extends BaseNode {
 
@@ -34,8 +34,8 @@ export class SeparateXYNode extends BaseNode {
             code += `float ${getVariableNameForSocket(this.output[1].uId!)} = ${socket.value!.y.toFixed(2)};\n`;
         }
         else {
-            code = `float ${getVariableNameForSocket(this.output[0].uId!)} = ${convertSocketTypes(socket.type,socket.conection[1],getVariableNameForSocket(socket.conection[0]))}.x;\n`;
-            code += `float ${getVariableNameForSocket(this.output[1].uId!)} = ${convertSocketTypes(socket.type,socket.conection[1],getVariableNameForSocket(socket.conection[0]))}.y;\n`;
+            code = `float ${getVariableNameForSocket(this.output[0].uId!)} = ${convertSocketTypes(socket.type, socket.conection[1], getVariableNameForSocket(socket.conection[0]))}.x;\n`;
+            code += `float ${getVariableNameForSocket(this.output[1].uId!)} = ${convertSocketTypes(socket.type, socket.conection[1], getVariableNameForSocket(socket.conection[0]))}.y;\n`;
         }
         return code + "\n";
     }

@@ -12,10 +12,24 @@
             <canvas id="canvas-bg" width="800" height="600"></canvas>
             <canvas id="canvas-board" width="800" height="600"></canvas>
             <canvas id="canvas-ui" width="800" height="600"></canvas>
-            <canvas id="canvas-input" width="800" height="600"></canvas>
+            <canvas id="canvas-input" width="800" height="600" tabindex="0"></canvas>
         </div>
         <div id="div-output">
-            <canvas id="canvas-output" width="200" height="200"></canvas>
+            <canvas id="canvas-output" width="300" height="300"></canvas>
+        </div>
+    </div>
+    <div id="menu">
+        <h3>Create Node</h3>
+        <div class="node-menu">
+            <h4>Input Nodes</h4>
+            <button id="n-coordinates">Coordinates</button>
+        </div>
+        <div class="node-menu">
+            <h4>Transform Nodes</h4>
+            <button id="n-separate-x-y">Separate X Y</button>
+            <button id="n-combine-x-y">Combine X Y</button>
+            <button id="n-separate-x-y-z">Separate X Y Z</button>
+            <button id="n-combine-x-y-z">Combine X Y Z</button>
         </div>
     </div>
 </body>

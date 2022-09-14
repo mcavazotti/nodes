@@ -6,7 +6,6 @@ import { InputEventType } from '../input/input-events';
 import { InputHandler } from '../input/input-handler';
 import { MouseInputType } from '../input/input-types';
 import { InputElement } from '../layout/elements/base-input-element';
-import { LayoutElementTypes } from '../layout/elements/element-types';
 import { NodeElement, SocketElement } from '../layout/layout-elements';
 import { LayoutManager } from '../layout/layout-manager';
 import { NodeEngine } from '../node/node-engine';
@@ -33,7 +32,7 @@ export class UiHandler {
 
         this.input.addEventListener(InputEventType.mousedown, (e, c) => {
             if (e.mouseButtonDown!.includes(MouseInputType.leftButton)) {
-                console.log(c)
+                // console.log(c)
                 this.context.setActive();
                 if (this.context.context.active == ContextType.node) {
                     this.layoutManager.moveNodeToFront(this.context.context.activeElement as NodeElement);
@@ -112,7 +111,9 @@ export class UiHandler {
                     this.layoutManager.generateLayout();
                 }
             }
-
+            if(e.mouseButtonDown) {
+                this.camera!.render(this.layoutManager.getLayout(), c);
+            }
 
         });
 
@@ -127,6 +128,19 @@ export class UiHandler {
                         break;
                 }
                 this.translateCameraAfterZoom(e.mousePosition!, e.mouseRawPosition!);
+            }
+        });
+
+        this.input.addEventListener(InputEventType.keyUp, (e, c) => {
+            switch (e.keyUp!) {
+                case 'Delete':
+                    if (c.active == ContextType.node) {
+                        if (this.engine.deleteNode((c.activeElement as NodeElement).id)) {
+                            this.layoutManager.generateLayout();
+                            this.camera?.render(this.layoutManager.getLayout(), c);
+                        }
+                    }
+                    break;
             }
         });
     }

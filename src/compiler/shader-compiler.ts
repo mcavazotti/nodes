@@ -15,8 +15,9 @@ function compileShader(nodes: Map<string, BaseNode>, outputId: string, uniforms:
         visiting: new Set(),
         mainCode: ""
     };
-
+    console.log("*****")
     transverseNodes(nodes.get(outputId)!, nodes, data);
+    console.log("*****")
     let finalCode = "precision mediump float;\n";
 
     for (const uniform of uniforms) {
@@ -33,11 +34,12 @@ function compileShader(nodes: Map<string, BaseNode>, outputId: string, uniforms:
         `${data.mainCode}` +
         "}";
 
+    console.log(finalCode)
     return finalCode;
 }
 
 function transverseNodes(node: BaseNode, nodes: Map<string, BaseNode>, compilationData: CompilationData) {
-    // console.log(node.label)
+    console.log(node.label)
     if (compilationData.visitedNode.has(node.uId))
         return;
 
@@ -63,4 +65,4 @@ function getNodeIdFromSocketId(id: string): string {
     return id.match(/(n-\d{4})/)![0];
 }
 
-export { compileShader, transverseNodes,CompilationData };
+export { compileShader, transverseNodes, CompilationData };

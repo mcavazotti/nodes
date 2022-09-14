@@ -209,6 +209,7 @@ export class Camera {
             this.board.context.fillText(socket[1].socket.label, rasterSocketLabelPos.x, rasterSocketLabelPos.y);
             if (socket[1].input) {
                 this.renderInput(socket[1].input, socket[1].socket.type);
+                this.board.context.font = `${this.realPixelSize(this.nodeStyle.fontSize!)}px ${this.nodeStyle.fontFace!}`;
             }
         }
 
@@ -302,12 +303,13 @@ export class Camera {
                 this.board.context.fillStyle = this.nodeStyle.fontColor!;
                 this.board.context.textAlign = "center";
 
-                
-                let rasterNumberPos = new Vector2(rasterPos.x + rasterDim.x / 2, rasterPos.y + rasterDim.y /  2);
-                
+
+                let rasterNumberPos = new Vector2(rasterPos.x + rasterDim.x / 2, rasterPos.y + rasterDim.y / 2);
+
                 let value = numberInput.parent.socket.value!;
                 this.board.context.fillText(value.toString(), rasterNumberPos.x, rasterNumberPos.y);
             }
+                break;
             case SocketType.vector2:
             case SocketType.vector3:
             case SocketType.vector4: {
