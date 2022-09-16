@@ -34,7 +34,7 @@ export class CombineXYNode extends BaseNode {
             convertSocketTypes(xSocket.type, xSocket.conection[1], getVariableNameForSocket(xSocket.conection[0])) :
             xSocket.value!.toString());
 
-        let ySocket = this.input[2] as Socket<number>;
+        let ySocket = this.input[1] as Socket<number>;
         let yComponent: string = (ySocket.conection ?
             convertSocketTypes(ySocket.type, ySocket.conection[1], getVariableNameForSocket(ySocket.conection[0])) :
             ySocket.value!.toString());

@@ -32,3 +32,18 @@ body {
 canvas {
     border: 1px solid black;
 }
+
+#menu {
+    display: flex;
+    gap: 15px;
+}
+.node-menu {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 5px;
+}
+
+.node-menu h4 {
+    grid-column-start: 1;
+    grid-column-end: 3;
+}

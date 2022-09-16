@@ -15,9 +15,7 @@ function compileShader(nodes: Map<string, BaseNode>, outputId: string, uniforms:
         visiting: new Set(),
         mainCode: ""
     };
-    console.log("*****")
     transverseNodes(nodes.get(outputId)!, nodes, data);
-    console.log("*****")
     let finalCode = "precision mediump float;\n";
 
     for (const uniform of uniforms) {
@@ -58,6 +56,9 @@ function transverseNodes(node: BaseNode, nodes: Map<string, BaseNode>, compilati
             compilationData.definitions.set(definition[0], definition[1]);
         }
     }
+
+    compilationData.visiting.delete(node.uId);
+    compilationData.visitedNode.add(node.uId);
     compilationData.mainCode += node.code();
 }
 

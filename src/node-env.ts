@@ -7,7 +7,7 @@ import { NodeEngine } from "./node/node-engine";
 import { LayoutManager } from "./layout/layout-manager";
 import { UiHandler } from "./ui/ui-handler";
 import { ContextManager } from "./context/context-manager";
-import { CombineXYNode, CombineXYZNode, CoordinateNode, SeparateXYNode, SeparateXYZNode } from "./node/definitions";
+import * as nd from "./node/definitions";
 
 
 /**
@@ -149,27 +149,52 @@ export class NodeEnviroment {
     // GAMBIARRA!
     private bindButtons() {
         document.getElementById('n-coordinates')?.addEventListener('click', () => {
-            this.engine.createNode(new CoordinateNode(new Vector2()));
+            this.engine.createNode(new nd.CoordinateNode(new Vector2()));
             this.layoutManager.generateLayout();
             this.camera.render(this.layoutManager.getLayout(), this.contextManager.context);
         });
         document.getElementById('n-separate-x-y')?.addEventListener('click', () => {
-            this.engine.createNode(new SeparateXYNode(new Vector2()));
+            this.engine.createNode(new nd.SeparateXYNode(new Vector2()));
             this.layoutManager.generateLayout();
             this.camera.render(this.layoutManager.getLayout(), this.contextManager.context);
         });
         document.getElementById('n-combine-x-y')?.addEventListener('click', () => {
-            this.engine.createNode(new CombineXYNode(new Vector2()));
+            this.engine.createNode(new nd.CombineXYNode(new Vector2()));
             this.layoutManager.generateLayout();
             this.camera.render(this.layoutManager.getLayout(), this.contextManager.context);
         });
         document.getElementById('n-separate-x-y-z')?.addEventListener('click', () => {
-            this.engine.createNode(new SeparateXYZNode(new Vector2()));
+            this.engine.createNode(new nd.SeparateXYZNode(new Vector2()));
             this.layoutManager.generateLayout();
             this.camera.render(this.layoutManager.getLayout(), this.contextManager.context);
         });
         document.getElementById('n-combine-x-y-z')?.addEventListener('click', () => {
-            this.engine.createNode(new CombineXYZNode(new Vector2()));
+            this.engine.createNode(new nd.CombineXYZNode(new Vector2()));
+            this.layoutManager.generateLayout();
+            this.camera.render(this.layoutManager.getLayout(), this.contextManager.context);
+        });
+        document.getElementById('n-add')?.addEventListener('click', () => {
+            this.engine.createNode(new nd.AddNode(new Vector2()));
+            this.layoutManager.generateLayout();
+            this.camera.render(this.layoutManager.getLayout(), this.contextManager.context);
+        });
+        document.getElementById('n-subtract')?.addEventListener('click', () => {
+            this.engine.createNode(new nd.SubtractNode(new Vector2()));
+            this.layoutManager.generateLayout();
+            this.camera.render(this.layoutManager.getLayout(), this.contextManager.context);
+        });
+        document.getElementById('n-multiply')?.addEventListener('click', () => {
+            this.engine.createNode(new nd.MultiplyNode(new Vector2()));
+            this.layoutManager.generateLayout();
+            this.camera.render(this.layoutManager.getLayout(), this.contextManager.context);
+        });
+        document.getElementById('n-divide')?.addEventListener('click', () => {
+            this.engine.createNode(new nd.DivideNode(new Vector2()));
+            this.layoutManager.generateLayout();
+            this.camera.render(this.layoutManager.getLayout(), this.contextManager.context);
+        });
+        document.getElementById('n-sqrt')?.addEventListener('click', () => {
+            this.engine.createNode(new nd.SqrtNode(new Vector2()));
             this.layoutManager.generateLayout();
             this.camera.render(this.layoutManager.getLayout(), this.contextManager.context);
         });

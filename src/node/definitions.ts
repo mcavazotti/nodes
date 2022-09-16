@@ -5,3 +5,8 @@ export { SeparateXYNode } from "./node-defs/transform/separate-xy-node";
 export { CombineXYNode } from "./node-defs/transform/combine-xy-node";
 export { SeparateXYZNode } from "./node-defs/transform/separate-xyz-node";
 export { CombineXYZNode } from "./node-defs/transform/combine-xyz-node";
+export { AddNode } from "./node-defs/math/add-node";
+export { SubtractNode } from "./node-defs/math/subtract-node";
+export { MultiplyNode } from "./node-defs/math/multiply-node";
+export { DivideNode } from "./node-defs/math/divide-node";
+export { SqrtNode } from "./node-defs/math/sqrt-node";
