@@ -4,7 +4,7 @@ import { LayoutElement } from "./base-elements";
 import { LayoutElementTypes } from "./element-types";
 import { SocketElement } from "./socket-element";
 
-export abstract class InputElement<T> extends LayoutElement {
+export abstract class SocketInputElement<T> extends LayoutElement {
 
     private onChange: (val: T) => void;
     get value(): T {

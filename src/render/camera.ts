@@ -5,7 +5,7 @@ import { DefaultNodeStyle, NodeStyle } from "./styles/node-style";
 import * as primitives from "./primitives"
 import { ColorRGB } from "../core/color/color";
 import { NodeElement } from "../layout/layout-elements";
-import { InputElement } from "../layout/elements/base-input-element";
+import { SocketInputElement } from "../layout/elements/base-input-element";
 import { SocketType } from "../node/types/socket-types";
 import { ColorInputElement } from "../layout/elements/color-input-element";
 import { LayoutData } from "../layout/layout-data";
@@ -213,6 +213,33 @@ export class Camera {
             }
         }
 
+        this.board.context.lineWidth = this.nodeStyle.borderThickness!;
+        this.board.context.strokeStyle = this.nodeStyle.innerBorderStyle!;
+        for (const parameter of nodeLayout.parameterLayouts) {
+            this.board.context.textBaseline = "middle";
+            this.board.context.font = `${this.realPixelSize(this.nodeStyle.fontSize!)}px ${this.nodeStyle.fontFace!}`;
+            this.board.context.textAlign = "left";
+            let rasterLabelPos = this.convertWorldCoordToRaster(parameter.labelPosition);
+            this.board.context.fillText(parameter.parameter.label, rasterLabelPos.x, rasterLabelPos.y);
+
+            let rasterPos = this.convertWorldCoordToRaster(parameter.position);
+            let rasterDim = new Vector2(this.realPixelSize(parameter.size.x), this.realPixelSize(parameter.size.y));
+
+            this.board.context.fillStyle = this.nodeStyle.innerBgColor!;
+            this.board.context.fillRect(rasterPos.x, rasterPos.y, rasterDim.x, rasterDim.y);
+            this.board.context.strokeRect(rasterPos.x, rasterPos.y, rasterDim.x, rasterDim.y);
+
+            this.board.context.font = `normal ${this.realPixelSize(this.nodeStyle.fontSize! * 0.8)}px ${this.nodeStyle.fontFace!}`;
+            this.board.context.textBaseline = "middle";
+            this.board.context.fillStyle = this.nodeStyle.fontColor!;
+            this.board.context.textAlign = "center";
+
+
+            let rasterNumberPos = new Vector2(rasterPos.x + rasterDim.x / 2, rasterPos.y + rasterDim.y / 2);
+
+            let value = parameter.parameter.value!;
+            this.board.context.fillText(value.toString(), rasterNumberPos.x, rasterNumberPos.y);
+        }
     }
 
     /**
@@ -270,7 +297,7 @@ export class Camera {
      * @param input Input element. It's specific type is infered based on the next parameter
      * @param type Type of input
      */
-    renderInput(input: InputElement<any>, type: SocketType) {
+    renderInput(input: SocketInputElement<any>, type: SocketType) {
         switch (type) {
             case SocketType.color: {
 

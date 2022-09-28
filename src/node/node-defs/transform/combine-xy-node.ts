@@ -31,12 +31,12 @@ export class CombineXYNode extends BaseNode {
 
         let xSocket = this.input[0] as Socket<number>;
         let xComponent: string = (xSocket.conection ?
-            convertSocketTypes(xSocket.type, xSocket.conection[1], getVariableNameForSocket(xSocket.conection[0])) :
+            convertSocketTypes(xSocket.conection[1], xSocket.type, getVariableNameForSocket(xSocket.conection[0])) :
             xSocket.value!.toString());
 
         let ySocket = this.input[1] as Socket<number>;
         let yComponent: string = (ySocket.conection ?
-            convertSocketTypes(ySocket.type, ySocket.conection[1], getVariableNameForSocket(ySocket.conection[0])) :
+            convertSocketTypes(ySocket.conection[1], ySocket.type, getVariableNameForSocket(ySocket.conection[0])) :
             ySocket.value!.toString());
 
         code = `vec2 ${getVariableNameForSocket(this.output[0].uId!)} = vec2(${xComponent}, ${yComponent});`

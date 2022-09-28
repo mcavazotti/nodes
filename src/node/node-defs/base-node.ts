@@ -1,13 +1,14 @@
 import { Vector2 } from "../../core/math/vector";
 import { NodeClass } from "../types/node-classes";
+import { NodeParameter } from "../types/parameter";
 import { Socket } from "../types/socket";
-import { SocketType } from "../types/socket-types";
 
 export abstract class BaseNode {
     protected _label!: string;
     protected _type!: NodeClass;
     protected _input!: Socket<any>[];
     protected _output!: Socket<any>[];
+    protected _parameters!: NodeParameter[];
 
     private static idCounter: number = 0;
 
@@ -15,6 +16,7 @@ export abstract class BaseNode {
     get type() { return this._type };
     get input() { return this._input };
     get output() { return this._output };
+    get parameters() { return this._parameters ?? [] };
     readonly uId: string;
 
     position: Vector2;

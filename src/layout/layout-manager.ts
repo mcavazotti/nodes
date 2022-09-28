@@ -4,10 +4,11 @@ import { BaseNode } from "../node/definitions";
 import { NodeEngine } from "../node/node-engine";
 import { SocketType } from "../node/types/socket-types";
 import { Camera } from "../render/camera";
-import { InputElement } from "./elements/base-input-element";
+import { SocketInputElement } from "./elements/base-input-element";
 import { ColorInputElement } from "./elements/color-input-element";
 import { LayoutElementTypes } from "./elements/element-types";
 import { NumberInputElement } from "./elements/number-input-element";
+import { ParameterElement } from "./elements/parameter-element";
 import { VectorInputElement } from "./elements/vector-input-element";
 import { LayoutData } from "./layout-data";
 import { NodeElement, SocketElement } from "./layout-elements";
@@ -95,6 +96,7 @@ export class LayoutManager {
                 size: new Vector2(),
                 bottomRight: new Vector2(),
                 socketLayouts: new Map<string, SocketElement>(),
+                parameterLayouts: [],
                 type: LayoutElementTypes.node
             };
 
@@ -103,9 +105,9 @@ export class LayoutManager {
             const headerLabelMeasurement = this.canvas.context.measureText(node.label)
             const textHeight = headerLabelMeasurement.fontBoundingBoxDescent + headerLabelMeasurement.fontBoundingBoxAscent;
 
-            layout.headerHeight = textHeight + 2 * this.activeCamera.nodeStyle.textMargin!;
+            layout.headerHeight = textHeight + 2 * this.activeCamera.nodeStyle.textMargin!.y;
 
-            layout.labelPosition = layout.position.add(new Vector2(this.activeCamera.convertPixelToUnit(this.activeCamera.nodeStyle.textMargin!, true), -(this.activeCamera.convertPixelToUnit(this.activeCamera.nodeStyle.textMargin! + headerLabelMeasurement.actualBoundingBoxAscent, true))));
+            layout.labelPosition = layout.position.add(new Vector2(this.activeCamera.convertPixelToUnit(this.activeCamera.nodeStyle.textMargin!.x, true), -(this.activeCamera.convertPixelToUnit(this.activeCamera.nodeStyle.textMargin!.y + headerLabelMeasurement.actualBoundingBoxAscent, true))));
 
             let longestText = headerLabelMeasurement.width;
 
@@ -118,7 +120,7 @@ export class LayoutManager {
                 if (textSize > longestText) longestText = textSize;
             }
 
-            const boxWidth = Math.max(longestText + 50 + 2 * this.activeCamera.nodeStyle.textMargin!, 120);
+            const boxWidth = Math.max(longestText + 50 + 2 * this.activeCamera.nodeStyle.textMargin!.x, 120);
 
             var offset = layout.headerHeight + textHeight;
 
@@ -135,7 +137,7 @@ export class LayoutManager {
                     size: new Vector2(),
                     type: LayoutElementTypes.socket
                 };
-                socketLayout.labelPosition = socketLayout.position.sub(new Vector2(this.activeCamera.convertPixelToUnit(this.activeCamera.nodeStyle.textMargin! + this.activeCamera.nodeStyle.socketRadius!, true), 0));
+                socketLayout.labelPosition = socketLayout.position.sub(new Vector2(this.activeCamera.convertPixelToUnit(this.activeCamera.nodeStyle.textMargin!.x, true), 0));
                 let realRadius = this.activeCamera.convertPixelToUnit(this.activeCamera.nodeStyle.socketRadius!, true);
                 socketLayout.topLeft = socketLayout.position.add(new Vector2(-realRadius, realRadius));
                 socketLayout.bottomRight = socketLayout.position.add(new Vector2(realRadius, -realRadius));
@@ -143,11 +145,27 @@ export class LayoutManager {
 
                 layout.socketLayouts.set(socket.uId!, socketLayout);
                 this.socketElements.set(socket.uId!, socketLayout);
-                offset += this.activeCamera.nodeStyle.textMargin! + textHeight;
+                offset += this.activeCamera.nodeStyle.textMargin!.y + textHeight;
 
                 if (newConnectionOrigin && newConnectionOrigin == socket.uId!) {
                     this.newConnection = [socketLayout.position, null];
                 }
+            }
+
+            for (const parameter of node.parameters) {
+                let labelPos = node.position.add(new Vector2(this.activeCamera!.convertPixelToUnit(this.activeCamera!.nodeStyle.textMargin!.x, true), - this.activeCamera!.convertPixelToUnit(offset, true)));
+                let inputPos = labelPos.sub(new Vector2(0, this.activeCamera.convertPixelToUnit(textHeight / 2 + this.activeCamera.nodeStyle.textMargin!.y, true)));
+                let size = new Vector2(boxWidth - this.activeCamera!.nodeStyle.textMargin!.x * 2, (textHeight * 0.8 + 5));
+                let parameterElement = new ParameterElement(
+                    parameter,
+                    layout,
+                    inputPos,
+                    size,
+                    inputPos.add(new Vector2(this.activeCamera!.convertPixelToUnit(size.x, true), -this.activeCamera!.convertPixelToUnit(size.y, true))),
+                    labelPos
+                );
+                layout.parameterLayouts.push(parameterElement);
+                offset += textHeight * 2 + this.activeCamera.nodeStyle.textMargin!.y * 2.5
             }
 
             for (const socket of node.input) {
@@ -163,7 +181,7 @@ export class LayoutManager {
                     size: new Vector2(),
                     type: LayoutElementTypes.socket
                 };
-                socketLayout.labelPosition = socketLayout.position.add(new Vector2(this.activeCamera.convertPixelToUnit(this.activeCamera.nodeStyle.textMargin! + this.activeCamera.nodeStyle.socketRadius!, true), 0));
+                socketLayout.labelPosition = socketLayout.position.add(new Vector2(this.activeCamera.convertPixelToUnit(this.activeCamera.nodeStyle.textMargin!.x, true), 0));
                 let realRadius = this.activeCamera.convertPixelToUnit(this.activeCamera.nodeStyle.socketRadius!, true);
                 socketLayout.topLeft = socketLayout.position.add(new Vector2(-realRadius, realRadius));
                 socketLayout.bottomRight = socketLayout.position.add(new Vector2(realRadius, -realRadius));
@@ -173,12 +191,12 @@ export class LayoutManager {
                 this.socketElements.set(socket.uId!, socketLayout);
 
                 if (!socket.conection) {
-                    offset += this.activeCamera.nodeStyle.textMargin! + textHeight / 2;
+                    offset += this.activeCamera.nodeStyle.textMargin!.y + textHeight / 2;
                     let inputLayoutReturnVal = this.generateInputLayout(socketLayout, offset, textHeight);
                     socketLayout.input = inputLayoutReturnVal[0];
                     offset = inputLayoutReturnVal[1];
                 } else {
-                    offset += this.activeCamera.nodeStyle.textMargin! + textHeight;
+                    offset += this.activeCamera.nodeStyle.textMargin!.y + textHeight;
 
                 }
 
@@ -203,8 +221,8 @@ export class LayoutManager {
         }
     }
 
-    private generateInputLayout(element: SocketElement, offset: number, textHeight: number): [InputElement<any>, number] {
-        let pos = element.parent.position.add(new Vector2(this.activeCamera!.convertPixelToUnit(this.activeCamera!.nodeStyle.textMargin! + this.activeCamera!.nodeStyle.socketRadius!, true), - this.activeCamera!.convertPixelToUnit(offset, true)));
+    private generateInputLayout(element: SocketElement, offset: number, textHeight: number): [SocketInputElement<any>, number] {
+        let pos = element.parent.position.add(new Vector2(this.activeCamera!.convertPixelToUnit(this.activeCamera!.nodeStyle.textMargin!.x, true), - this.activeCamera!.convertPixelToUnit(offset, true)));
         switch (element.socket.type) {
             case SocketType.color:
                 {

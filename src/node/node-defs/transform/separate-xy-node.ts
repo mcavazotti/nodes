@@ -34,8 +34,8 @@ export class SeparateXYNode extends BaseNode {
             code += `float ${getVariableNameForSocket(this.output[1].uId!)} = ${socket.value!.y.toFixed(2)};\n`;
         }
         else {
-            code = `float ${getVariableNameForSocket(this.output[0].uId!)} = ${convertSocketTypes(socket.type, socket.conection[1], getVariableNameForSocket(socket.conection[0]))}.x;\n`;
-            code += `float ${getVariableNameForSocket(this.output[1].uId!)} = ${convertSocketTypes(socket.type, socket.conection[1], getVariableNameForSocket(socket.conection[0]))}.y;\n`;
+            code = `float ${getVariableNameForSocket(this.output[0].uId!)} = ${convertSocketTypes(socket.conection[1], socket.type, getVariableNameForSocket(socket.conection[0]))}.x;\n`;
+            code += `float ${getVariableNameForSocket(this.output[1].uId!)} = ${convertSocketTypes(socket.conection[1], socket.type, getVariableNameForSocket(socket.conection[0]))}.y;\n`;
         }
         return code + "\n";
     }

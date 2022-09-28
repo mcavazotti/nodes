@@ -5,7 +5,8 @@ import { Vector2, Vector3 } from '../core/math/vector';
 import { InputEventType } from '../input/input-events';
 import { InputHandler } from '../input/input-handler';
 import { MouseInputType } from '../input/input-types';
-import { InputElement } from '../layout/elements/base-input-element';
+import { SocketInputElement } from '../layout/elements/base-input-element';
+import { ParameterElement } from '../layout/elements/parameter-element';
 import { NodeElement, SocketElement } from '../layout/layout-elements';
 import { LayoutManager } from '../layout/layout-manager';
 import { NodeEngine } from '../node/node-engine';
@@ -65,35 +66,56 @@ export class UiHandler {
                 this.connectSocket = null;
                 this.layoutManager.generateLayout();
             } else {
-                if (c.hover == ContextType.input) {
-                    let prompt = "Insert";
-                    switch ((c.hoverElement as InputElement<any>).parent.socket.type) {
-                        case SocketType.bool:
-                            prompt += " boolean value: \n<\"true\" | \"false\">";
-                            break;
-                        case SocketType.float:
-                            prompt += " numerical value: \n<number>";
-                            break;
-                        case SocketType.vector2:
-                            prompt += " vector value: \n<format: \"(x,y)\">";
-                            break;
-                        case SocketType.vector3:
-                            prompt += " vector value: \n<format: \"(x,y,z)\">";
-                            break;
-                        case SocketType.vector4:
-                            prompt += " vector value: \n<format: \"(x,y,z,w)\">";
-                            break;
-                        case SocketType.color:
-                            prompt += " color value: \n<format: HTML color code (hex or name) OR \"(r,g,b,a)\">";
-                            break;
-                    }
-                    let value: string | null = window.prompt(prompt);
-                    if (value !== null) {
-                        this.setInputValue(value, (c.hoverElement as InputElement<any>));
-                        this.camera!.render(this.layoutManager.getLayout(), c);
-                        this.engine.compile();
-                    }
+                switch (c.hover) {
+                    case ContextType.input: {
+                        let prompt = "Insert";
+                        switch ((c.hoverElement as SocketInputElement<any>).parent.socket.type) {
+                            case SocketType.bool:
+                                prompt += " boolean value: \n<\"true\" | \"false\">";
+                                break;
+                            case SocketType.float:
+                                prompt += " numerical value: \n<number>";
+                                break;
+                            case SocketType.vector2:
+                                prompt += " vector value: \n<format: \"(x,y)\">";
+                                break;
+                            case SocketType.vector3:
+                                prompt += " vector value: \n<format: \"(x,y,z)\">";
+                                break;
+                            case SocketType.vector4:
+                                prompt += " vector value: \n<format: \"(x,y,z,w)\">";
+                                break;
+                            case SocketType.color:
+                                prompt += " color value: \n<format: HTML color code (hex or name) OR \"(r,g,b,a)\">";
+                                break;
+                        }
+                        let value: string | null = window.prompt(prompt);
+                        if (value !== null) {
+                            this.setInputValue(value, (c.hoverElement as SocketInputElement<any>));
+                            this.camera!.render(this.layoutManager.getLayout(), c);
+                            this.engine.compile();
+                        }
 
+                    }
+                        break;
+                    case ContextType.paramInput: {
+                        let paramElement = c.hoverElement as ParameterElement;
+                        let prompt = 'Set parameter:\n';
+                        if (paramElement.parameter.validValues)
+                            prompt += `Valid values: ${paramElement.parameter.validValues.toString()}`;
+
+                        let value: string | null = window.prompt(prompt);
+                        if (value !== null) {
+                            if (paramElement.parameter.validValues) {
+                                if (!paramElement.parameter.validValues.includes(value))
+                                    throw Error(`Invalid parameter: ${value}`);
+                            }
+                            paramElement.parameter.value = value;
+                            this.camera!.render(this.layoutManager.getLayout(), c);
+                            this.engine.compile();
+                        }
+                    }
+                        break;
                 }
             }
 
@@ -111,7 +133,7 @@ export class UiHandler {
                     this.layoutManager.generateLayout();
                 }
             }
-            if(e.mouseButtonDown) {
+            if (e.mouseButtonDown) {
                 this.camera!.render(this.layoutManager.getLayout(), c);
             }
 
@@ -166,7 +188,7 @@ export class UiHandler {
         this.camera!.position = this.camera!.position.sub(offset);
     }
 
-    private setInputValue(value: string, input: InputElement<any>) {
+    private setInputValue(value: string, input: SocketInputElement<any>) {
         switch (input.parent.socket.type) {
             case SocketType.bool:
                 switch (value.toLowerCase().trim()) {

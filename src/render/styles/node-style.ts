@@ -1,3 +1,4 @@
+import { Vector2 } from "../../core/math/vector";
 import { NodeClass } from "../../node/types/node-classes";
 import { SocketType } from "../../node/types/socket-types";
 
@@ -12,14 +13,14 @@ interface NodeStyle {
     fontFace?: string;
     fontSize?: number;
     fontColor?: string;
-    textMargin?: number;
+    textMargin?: Vector2;
     borderThickness?: number;
     headerColors?: Map<NodeClass, string>;
     socketColors?: Map<SocketType, string>;
     socketRadius?: number;
     connectionColor?: string;
     connectionThickness?: number;
-    connectionControlPointOffset?:number;
+    connectionControlPointOffset?: number;
 }
 
 const DefaultNodeStyle: NodeStyle = {
@@ -30,17 +31,18 @@ const DefaultNodeStyle: NodeStyle = {
     fontFace: "Arial",
     fontSize: 16,
     fontColor: "white",
-    textMargin: 3,
+    textMargin: new Vector2(8,5),
     borderThickness: 1,
     headerColors: new Map([
-        [NodeClass.output, "tomato"], 
-        [NodeClass.input,"blueviolet" ],
-        [NodeClass.transform,"darkgreen" ],
+        [NodeClass.output, "tomato"],
+        [NodeClass.input, "blueviolet"],
+        [NodeClass.transform, "darkgreen"],
+        [NodeClass.mathOp, "teal"],
     ]),
     socketColors: new Map([
         [SocketType.color, "cyan"],
-        [SocketType.vector2,"red"],
-        [SocketType.float,"orange"],
+        [SocketType.vector2, "red"],
+        [SocketType.float, "orange"],
     ]),
     socketRadius: 5,
     connectionColor: "#ffffff",

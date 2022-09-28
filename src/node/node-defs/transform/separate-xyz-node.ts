@@ -36,9 +36,9 @@ export class SeparateXYZNode extends BaseNode {
             code += `float ${getVariableNameForSocket(this.output[2].uId!)} = ${socket.value!.z.toFixed(2)};\n`;
         }
         else {
-            code = `float ${getVariableNameForSocket(this.output[0].uId!)} = ${convertSocketTypes(socket.type, socket.conection[1], getVariableNameForSocket(socket.conection[0]))}.x;\n`;
-            code += `float ${getVariableNameForSocket(this.output[1].uId!)} = ${convertSocketTypes(socket.type, socket.conection[1], getVariableNameForSocket(socket.conection[0]))}.y;\n`;
-            code += `float ${getVariableNameForSocket(this.output[2].uId!)} = ${convertSocketTypes(socket.type, socket.conection[1], getVariableNameForSocket(socket.conection[0]))}.z;\n`;
+            code = `float ${getVariableNameForSocket(this.output[0].uId!)} = ${convertSocketTypes(socket.conection[1], socket.type, getVariableNameForSocket(socket.conection[0]))}.x;\n`;
+            code += `float ${getVariableNameForSocket(this.output[1].uId!)} = ${convertSocketTypes(socket.conection[1], socket.type, getVariableNameForSocket(socket.conection[0]))}.y;\n`;
+            code += `float ${getVariableNameForSocket(this.output[2].uId!)} = ${convertSocketTypes(socket.conection[1], socket.type, getVariableNameForSocket(socket.conection[0]))}.z;\n`;
         }
         return code + "\n";
     }

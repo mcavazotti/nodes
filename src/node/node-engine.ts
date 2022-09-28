@@ -1,6 +1,6 @@
 import { CompilationData, compileShader, transverseNodes } from "../compiler/shader-compiler";
 import { Vector2 } from "../core/math/vector";
-import { BaseNode, CoordinateNode, OutputNode, SeparateXYNode } from "./definitions";
+import { BaseNode, OutputNode, } from "./definitions";
 import { Socket } from "./types/socket";
 
 export class NodeEngine {

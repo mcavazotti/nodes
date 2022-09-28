@@ -43,6 +43,13 @@ export class ContextManager {
             for (let i = layout.nodes.length - 1; i >= 0; i--) {
                 const node = layout.nodes[i];
                 
+                for(const parameter of node.parameterLayouts) {
+                    if(this.isInside(worldPointerPos, parameter.position, parameter.bottomRight)){
+                        this._context.hover = ContextType.paramInput;
+                        this._context.hoverElement = parameter;
+                        return;
+                    }
+                }
 
                 for (const socket of node.socketLayouts.values()) {
                     if (this.isInside(worldPointerPos, socket.topLeft, socket.bottomRight)) {

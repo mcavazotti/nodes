@@ -148,56 +148,51 @@ export class NodeEnviroment {
     // temporary method
     // GAMBIARRA!
     private bindButtons() {
+        let middleOfScreen = this.camera.canvasDimention.scale(0.5);
+        let middleOfView = () => this.camera.convertRasterCoordToWorld(middleOfScreen);
+        
+
         document.getElementById('n-coordinates')?.addEventListener('click', () => {
-            this.engine.createNode(new nd.CoordinateNode(new Vector2()));
+            this.engine.createNode(new nd.CoordinateNode(middleOfView()));
             this.layoutManager.generateLayout();
             this.camera.render(this.layoutManager.getLayout(), this.contextManager.context);
         });
         document.getElementById('n-separate-x-y')?.addEventListener('click', () => {
-            this.engine.createNode(new nd.SeparateXYNode(new Vector2()));
+            this.engine.createNode(new nd.SeparateXYNode(middleOfView()));
             this.layoutManager.generateLayout();
             this.camera.render(this.layoutManager.getLayout(), this.contextManager.context);
         });
         document.getElementById('n-combine-x-y')?.addEventListener('click', () => {
-            this.engine.createNode(new nd.CombineXYNode(new Vector2()));
+            this.engine.createNode(new nd.CombineXYNode(middleOfView()));
             this.layoutManager.generateLayout();
             this.camera.render(this.layoutManager.getLayout(), this.contextManager.context);
         });
         document.getElementById('n-separate-x-y-z')?.addEventListener('click', () => {
-            this.engine.createNode(new nd.SeparateXYZNode(new Vector2()));
+            this.engine.createNode(new nd.SeparateXYZNode(middleOfView()));
             this.layoutManager.generateLayout();
             this.camera.render(this.layoutManager.getLayout(), this.contextManager.context);
         });
         document.getElementById('n-combine-x-y-z')?.addEventListener('click', () => {
-            this.engine.createNode(new nd.CombineXYZNode(new Vector2()));
+            this.engine.createNode(new nd.CombineXYZNode(middleOfView()));
             this.layoutManager.generateLayout();
             this.camera.render(this.layoutManager.getLayout(), this.contextManager.context);
         });
-        document.getElementById('n-add')?.addEventListener('click', () => {
-            this.engine.createNode(new nd.AddNode(new Vector2()));
+        document.getElementById('n-s-bin-op')?.addEventListener('click', () => {
+            this.engine.createNode(new nd.ScalarBinOpNode(middleOfView()));
             this.layoutManager.generateLayout();
             this.camera.render(this.layoutManager.getLayout(), this.contextManager.context);
         });
-        document.getElementById('n-subtract')?.addEventListener('click', () => {
-            this.engine.createNode(new nd.SubtractNode(new Vector2()));
+        document.getElementById('n-s-un-op')?.addEventListener('click', () => {
+            this.engine.createNode(new nd.ScalarUnOpNode(middleOfView()));
             this.layoutManager.generateLayout();
             this.camera.render(this.layoutManager.getLayout(), this.contextManager.context);
         });
-        document.getElementById('n-multiply')?.addEventListener('click', () => {
-            this.engine.createNode(new nd.MultiplyNode(new Vector2()));
+        document.getElementById('n-s-b-bin-op')?.addEventListener('click', () => {
+            this.engine.createNode(new nd.ScalarBoolBinOpNode(middleOfView()));
             this.layoutManager.generateLayout();
             this.camera.render(this.layoutManager.getLayout(), this.contextManager.context);
         });
-        document.getElementById('n-divide')?.addEventListener('click', () => {
-            this.engine.createNode(new nd.DivideNode(new Vector2()));
-            this.layoutManager.generateLayout();
-            this.camera.render(this.layoutManager.getLayout(), this.contextManager.context);
-        });
-        document.getElementById('n-sqrt')?.addEventListener('click', () => {
-            this.engine.createNode(new nd.SqrtNode(new Vector2()));
-            this.layoutManager.generateLayout();
-            this.camera.render(this.layoutManager.getLayout(), this.contextManager.context);
-        });
+
     }
 
 }
