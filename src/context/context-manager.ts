@@ -1,4 +1,5 @@
 import { Vector2 } from "../core/math/vector";
+import { NodeElement } from "../layout/layout-elements";
 import { LayoutManager } from "../layout/layout-manager";
 import { ContextData } from "./context-data";
 import { ContextType } from "./context-types";
@@ -33,18 +34,19 @@ export class ContextManager {
     updateContext(worldPointerPos: Vector2, rasterPointerPos: Vector2) {
         // console.log("updateContext")
         let layout = LayoutManager.getInstance().getLayout();
-        this._context.pointerPosition = worldPointerPos; 
+        this._context.pointerPosition = worldPointerPos;
 
-        // if (layout.ui) {
-        //     // TODO: something here 
-        // }
+        if (!layout.nodes || (this._context.active == ContextType.node && !layout.nodes.map(n => n.id).includes((this._context.activeElement as (NodeElement | null))?.id!))) {
+            this._context.active = ContextType.any;
+            this._context.activeElement = null;
+        }
 
         if (layout.nodes) {
             for (let i = layout.nodes.length - 1; i >= 0; i--) {
                 const node = layout.nodes[i];
-                
-                for(const parameter of node.parameterLayouts) {
-                    if(this.isInside(worldPointerPos, parameter.position, parameter.bottomRight)){
+
+                for (const parameter of node.parameterLayouts) {
+                    if (this.isInside(worldPointerPos, parameter.position, parameter.bottomRight)) {
                         this._context.hover = ContextType.paramInput;
                         this._context.hoverElement = parameter;
                         return;
@@ -59,8 +61,8 @@ export class ContextManager {
                         this._context.hoverElement = socket;
                         return;
                     }
-                    if(socket.input) {
-                        if(this.isInside(worldPointerPos, socket.input.position, socket.input.bottomRight)) {
+                    if (socket.input) {
+                        if (this.isInside(worldPointerPos, socket.input.position, socket.input.bottomRight)) {
                             this._context.hover = ContextType.input;
                             this._context.hoverElement = socket.input;
                             return;

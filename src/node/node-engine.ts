@@ -94,6 +94,7 @@ export class NodeEngine {
     createNode(node:BaseNode) {
         this._nodes.set(node.uId,node);
         this._nodeArray.push(node);
+        // console.log(JSON.stringify(this._nodeArray));
     }
 
     deleteNode(id: string): boolean {

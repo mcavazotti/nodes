@@ -162,6 +162,7 @@ export class UiHandler {
                             this.camera?.render(this.layoutManager.getLayout(), c);
                         }
                     }
+                    this.context.updateContext(c.pointerPosition, new Vector2());
                     break;
             }
         });

@@ -42,7 +42,9 @@ const DefaultNodeStyle: NodeStyle = {
     socketColors: new Map([
         [SocketType.color, "cyan"],
         [SocketType.vector2, "red"],
+        [SocketType.vector3, "green"],
         [SocketType.float, "orange"],
+        [SocketType.bool, "yellow"],
     ]),
     socketRadius: 5,
     connectionColor: "#ffffff",
