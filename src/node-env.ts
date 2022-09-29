@@ -150,7 +150,7 @@ export class NodeEnviroment {
     private bindButtons() {
         let middleOfScreen = this.camera.canvasDimention.scale(0.5);
         let middleOfView = () => this.camera.convertRasterCoordToWorld(middleOfScreen);
-        
+
 
         document.getElementById('n-coordinates')?.addEventListener('click', () => {
             this.engine.createNode(new nd.CoordinateNode(middleOfView()));
@@ -199,6 +199,36 @@ export class NodeEnviroment {
         });
         document.getElementById('n-v2-bin-s-op')?.addEventListener('click', () => {
             this.engine.createNode(new nd.Vec2BinScalarOpNode(middleOfView()));
+            this.layoutManager.generateLayout();
+            this.camera.render(this.layoutManager.getLayout(), this.contextManager.context);
+        });
+        document.getElementById('n-v2-s-bin-op')?.addEventListener('click', () => {
+            this.engine.createNode(new nd.Vec2ScalarBinOpNode(middleOfView()));
+            this.layoutManager.generateLayout();
+            this.camera.render(this.layoutManager.getLayout(), this.contextManager.context);
+        });
+        document.getElementById('n-v3-bin-op')?.addEventListener('click', () => {
+            this.engine.createNode(new nd.Vec3BinOpNode(middleOfView()));
+            this.layoutManager.generateLayout();
+            this.camera.render(this.layoutManager.getLayout(), this.contextManager.context);
+        });
+        document.getElementById('n-v3-bin-s-op')?.addEventListener('click', () => {
+            this.engine.createNode(new nd.Vec3BinScalarOpNode(middleOfView()));
+            this.layoutManager.generateLayout();
+            this.camera.render(this.layoutManager.getLayout(), this.contextManager.context);
+        });
+        document.getElementById('n-v3-s-bin-op')?.addEventListener('click', () => {
+            this.engine.createNode(new nd.Vec3ScalarBinOpNode(middleOfView()));
+            this.layoutManager.generateLayout();
+            this.camera.render(this.layoutManager.getLayout(), this.contextManager.context);
+        });
+        document.getElementById('n-v2-norm')?.addEventListener('click', () => {
+            this.engine.createNode(new nd.Vec2NormalizeNode(middleOfView()));
+            this.layoutManager.generateLayout();
+            this.camera.render(this.layoutManager.getLayout(), this.contextManager.context);
+        });
+        document.getElementById('n-v3-norm')?.addEventListener('click', () => {
+            this.engine.createNode(new nd.Vec3NormalizeNode(middleOfView()));
             this.layoutManager.generateLayout();
             this.camera.render(this.layoutManager.getLayout(), this.contextManager.context);
         });

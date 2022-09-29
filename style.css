@@ -35,15 +35,23 @@ canvas {
 
 #menu {
     display: flex;
-    gap: 15px;
+    gap: 40px;
+    height: 200px;
 }
+
+#menu > div {
+    display: flex;
+    flex-direction: column;
+}
+
 .node-menu {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-auto-flow: column;
+    grid-template-rows: 1fr 1fr 1fr;
     gap: 5px;
+    flex-grow: 2;
 }
 
 .node-menu h4 {
     grid-column-start: 1;
-    grid-column-end: 3;
 }
