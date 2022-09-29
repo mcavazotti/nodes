@@ -73,8 +73,11 @@ class Vector2 extends Vector {
         return this;
     }
 
-    toString(): string {
-        return `(${this.x}, ${this.y})`
+    toString(decimal?: number): string {
+        if (decimal)
+            return `(${this.x.toFixed(decimal)}, ${this.y.toFixed(decimal)})`;
+        else
+            return `(${this.x}, ${this.y})`;
     }
 }
 
@@ -159,8 +162,11 @@ class Vector3 extends Vector {
         return this;
     }
 
-    toString(): string {
-        return `(${this.x}, ${this.y}, ${this.z})`
+    toString(decimal?: number): string {
+        if (decimal)
+            return `(${this.x.toFixed(decimal)}, ${this.y.toFixed(decimal)}, ${this.z.toFixed(decimal)})`;
+        else
+            return `(${this.x}, ${this.y}, ${this.z})`;
     }
 }
 
@@ -247,8 +253,11 @@ class Vector4 extends Vector {
         return this;
     }
 
-    toString(): string {
-        return `(${this.x}, ${this.y}, ${this.z}, ${this.w})`
+    toString(decimal?: number): string {
+        if (decimal)
+            return `(${this.x.toFixed(decimal)}, ${this.y.toFixed(decimal)}, ${this.z.toFixed(decimal)}, ${this.w.toFixed(decimal)})`;
+        else
+            return `(${this.x}, ${this.y}, ${this.z}, ${this.w})`;
     }
 }
 export { Vector, Vector2, Vector3, Vector4 };

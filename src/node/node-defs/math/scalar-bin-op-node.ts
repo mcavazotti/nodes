@@ -19,6 +19,8 @@ export class ScalarBinOpNode extends BaseNode {
                 return "Divide";
             case 'pow':
                 return "Power";
+            case 'mod':
+                return "Modulo";
         }
         return this._label;
     }
@@ -38,7 +40,7 @@ export class ScalarBinOpNode extends BaseNode {
             {
                 label: "Operation",
                 value: "+",
-                validValues: ['+', '-', '*', '/', 'pow']
+                validValues: ['+', '-', '*', '/', 'pow', 'mod']
             },
         ]
 
@@ -47,6 +49,10 @@ export class ScalarBinOpNode extends BaseNode {
 
     definitions(): [string, string][] {
         return [];
+    }
+
+    private isFunc(): boolean {
+        return ['pow', 'mod'].includes(this._parameters[0].value)
     }
 
     code(): string {
@@ -62,10 +68,10 @@ export class ScalarBinOpNode extends BaseNode {
             convertSocketTypes(num2Socket.conection[1], num2Socket.type, getVariableNameForSocket(num2Socket.conection[0])) :
             num2Socket.value!.toFixed(2));
 
-        if (this._parameters[0].value != 'pow')
-            code = `float ${getVariableNameForSocket(this.output[0].uId!)} = ${num1} ${this._parameters[0].value} ${num2};`
+        if (this.isFunc())
+            code = `float ${getVariableNameForSocket(this.output[0].uId!)} = ${this._parameters[0].value}(${num1}, ${num2});`
         else
-            code = `float ${getVariableNameForSocket(this.output[0].uId!)} = pow(${num1}, ${num2});`
+            code = `float ${getVariableNameForSocket(this.output[0].uId!)} = ${num1} ${this._parameters[0].value} ${num2};`
 
         return code + "\n";
     }

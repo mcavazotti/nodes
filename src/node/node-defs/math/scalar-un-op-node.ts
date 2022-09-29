@@ -13,6 +13,14 @@ export class ScalarUnOpNode extends BaseNode {
                 return "Square Root";
             case 'exp':
                 return "Exponential";
+            case 'floor':
+                return "Floor";
+            case 'ceil':
+                return "Ceil";
+            case 'sin':
+                return "Sine";
+            case 'cos':
+                return "Cosine";
 
         }
         return this._label;
@@ -32,7 +40,7 @@ export class ScalarUnOpNode extends BaseNode {
             {
                 label: "Operation",
                 value: "sqrt",
-                validValues: ['sqrt', 'exp']
+                validValues: ['sqrt', 'exp', 'floor','ceil','sin','cos']
             },
         ]
 

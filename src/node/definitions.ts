@@ -6,5 +6,7 @@ export { CombineXYNode } from "./node-defs/transform/combine-xy-node";
 export { SeparateXYZNode } from "./node-defs/transform/separate-xyz-node";
 export { CombineXYZNode } from "./node-defs/transform/combine-xyz-node";
 export { ScalarBinOpNode } from "./node-defs/math/scalar-bin-op-node";
-export { ScalarBoolBinOpNode } from "./node-defs/math/scalar-bool-bin-op-node";
+export { ScalarBinBoolOpNode } from "./node-defs/math/scalar-bin-bool-op-node";
 export { ScalarUnOpNode } from "./node-defs/math/scalar-un-op-node";
+export { Vec2BinOpNode } from "./node-defs/math/v2-bin-op-node";
+export { Vec2BinScalarOpNode } from "./node-defs/math/v2-bin-scalar-op-node";

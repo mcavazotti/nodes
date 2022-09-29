@@ -5,7 +5,7 @@ import { SocketType } from "../../types/socket-types";
 import { BaseNode } from "../base-node";
 import { convertSocketTypes, getVariableNameForSocket } from "../node-code-helpers";
 
-export class ScalarBoolBinOpNode extends BaseNode {
+export class ScalarBinBoolOpNode extends BaseNode {
 
     override get label(): string {
         switch (this._parameters[0].value) {

@@ -187,12 +187,21 @@ export class NodeEnviroment {
             this.layoutManager.generateLayout();
             this.camera.render(this.layoutManager.getLayout(), this.contextManager.context);
         });
-        document.getElementById('n-s-b-bin-op')?.addEventListener('click', () => {
-            this.engine.createNode(new nd.ScalarBoolBinOpNode(middleOfView()));
+        document.getElementById('n-s-bin-b-op')?.addEventListener('click', () => {
+            this.engine.createNode(new nd.ScalarBinBoolOpNode(middleOfView()));
             this.layoutManager.generateLayout();
             this.camera.render(this.layoutManager.getLayout(), this.contextManager.context);
         });
-
+        document.getElementById('n-v2-bin-op')?.addEventListener('click', () => {
+            this.engine.createNode(new nd.Vec2BinOpNode(middleOfView()));
+            this.layoutManager.generateLayout();
+            this.camera.render(this.layoutManager.getLayout(), this.contextManager.context);
+        });
+        document.getElementById('n-v2-bin-s-op')?.addEventListener('click', () => {
+            this.engine.createNode(new nd.Vec2BinScalarOpNode(middleOfView()));
+            this.layoutManager.generateLayout();
+            this.camera.render(this.layoutManager.getLayout(), this.contextManager.context);
+        });
     }
 
 }
